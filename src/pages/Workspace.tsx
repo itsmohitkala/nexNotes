@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { WorkspaceSidebar } from '@/components/workspace/WorkspaceSidebar';
 import { NotesPanel } from '@/components/workspace/NotesPanel';
 import { AiAssistant } from '@/components/workspace/AiAssistant';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Layers, PanelLeftClose, PanelLeft, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -35,6 +35,12 @@ Benefits:
     },
   ]);
   const { signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/', { replace: true });
+  };
 
   const activeNote = notes.find((n) => n.id === activeNoteId) || notes[0] || null;
 
@@ -57,7 +63,7 @@ Benefits:
           </Button>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" onClick={signOut}>Log out</Button>
+          <Button variant="ghost" size="sm" onClick={handleSignOut}>Log out</Button>
           <Button variant="ghost" size="icon" className="h-8 w-8">
             <Settings className="h-4 w-4" />
           </Button>
