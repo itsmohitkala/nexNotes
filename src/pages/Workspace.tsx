@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { WorkspaceSidebar } from '@/components/workspace/WorkspaceSidebar';
 import { NotesPanel } from '@/components/workspace/NotesPanel';
 import { AiAssistant } from '@/components/workspace/AiAssistant';
+import { CreateNoteDialog } from '@/components/workspace/CreateNoteDialog';
 import { Link, useNavigate } from 'react-router-dom';
 import { Layers, PanelLeftClose, PanelLeft, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -17,6 +18,7 @@ export interface NoteData {
 const Workspace = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [notes, setNotes] = useState<NoteData[]>([
     {
       id: '1',
@@ -78,18 +80,24 @@ Benefits:
             notes={notes}
             activeNoteId={activeNote?.id || null}
             onSelectNote={setActiveNoteId}
-            onCreateNote={() => {
-              const newNote: NoteData = {
-                id: Date.now().toString(),
-                title: 'New Note',
-                content: '',
-                created_at: new Date().toISOString(),
-              };
-              setNotes((prev) => [newNote, ...prev]);
-              setActiveNoteId(newNote.id);
-            }}
+            onCreateNote={() => setCreateDialogOpen(true)}
           />
         )}
+
+        <CreateNoteDialog
+          open={createDialogOpen}
+          onOpenChange={setCreateDialogOpen}
+          onNoteCreated={({ title, content }) => {
+            const newNote: NoteData = {
+              id: Date.now().toString(),
+              title,
+              content,
+              created_at: new Date().toISOString(),
+            };
+            setNotes((prev) => [newNote, ...prev]);
+            setActiveNoteId(newNote.id);
+          }}
+        />
 
         {/* Content + AI */}
         <div className="flex-1 flex flex-col overflow-hidden">
