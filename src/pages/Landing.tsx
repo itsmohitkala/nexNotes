@@ -68,6 +68,20 @@ const Landing = () => {
         console.log('Upload response:', uploadData);
       }
 
+      // Generate signed URL for the uploaded PDF
+      let fileUrl: string | null = null;
+      if (isPdf && storagePath) {
+        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+          .from('uploads')
+          .createSignedUrl(storagePath, 60 * 60); // 1 hour expiry
+        if (signedUrlError) {
+          console.error('Signed URL error:', signedUrlError);
+        } else {
+          fileUrl = signedUrlData.signedUrl;
+          console.log('Signed URL:', fileUrl);
+        }
+      }
+
       // 2. Insert note into database (only after upload succeeds)
       const { data: noteData, error: noteError } = await supabase
         .from('notes')
@@ -87,6 +101,7 @@ const Landing = () => {
           noteId: noteData.id,
           sourceType,
           sourceRef: isPdf ? storagePath : (url || null),
+          fileUrl,
           rawText: text || null,
           title,
         }),
