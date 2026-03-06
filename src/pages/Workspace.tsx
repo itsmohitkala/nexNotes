@@ -78,7 +78,7 @@ Benefits:
             notes={notes}
             activeNoteId={activeNote?.id || null}
             onSelectNote={setActiveNoteId}
-            onCreateNote={() => setCreateDialogOpen(true)}
+            onCreateNote={() => navigate('/')}
           />
         )}
 
