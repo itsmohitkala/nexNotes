@@ -29,19 +29,53 @@ const Landing = () => {
       return;
     }
 
+    if (!user) {
+      toast.error('Please sign in first.');
+      return;
+    }
+
     setProcessing(true);
     try {
       const webhookUrl = 'https://n8n.srv1006534.hstgr.cloud/webhook-test/f29d58c6-3923-4ddb-9426-85667b7d8266';
-      
-      const formData = new FormData();
-      if (url) formData.append('url', url);
-      if (text) formData.append('text', text);
-      if (file) formData.append('file', file);
-      if (user) formData.append('user_id', user.id);
 
+      // Determine source type
+      const isPdf = file && file.type === 'application/pdf';
+      const sourceType = isPdf ? 'pdf' : url ? 'url' : 'text';
+      const title = file?.name?.replace(/\.pdf$/i, '') || url || 'Untitled';
+
+      // 1. Insert note into database
+      const { data: noteData, error: noteError } = await supabase
+        .from('notes')
+        .insert({ user_id: user.id, title })
+        .select('id')
+        .single();
+
+      if (noteError || !noteData) throw new Error('Failed to create note');
+      const noteId = noteData.id;
+
+      let storagePath: string | null = null;
+
+      // 2. If PDF, upload to storage
+      if (isPdf && file) {
+        storagePath = `${user.id}/${noteId}/source.pdf`;
+        const { error: uploadError } = await supabase.storage
+          .from('uploads')
+          .upload(storagePath, file, { contentType: 'application/pdf' });
+        if (uploadError) throw new Error('Failed to upload file');
+      }
+
+      // 3. Call n8n webhook with JSON
       const res = await fetch(webhookUrl, {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          noteId,
+          sourceType,
+          sourceRef: isPdf ? storagePath : (url || null),
+          rawText: text || null,
+          title,
+        }),
       });
 
       if (!res.ok) throw new Error('Processing failed');
