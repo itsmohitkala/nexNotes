@@ -38,39 +38,53 @@ const Landing = () => {
     try {
       const webhookUrl = 'https://n8n.srv1006534.hstgr.cloud/webhook-test/f29d58c6-3923-4ddb-9426-85667b7d8266';
 
-      // Determine source type
       const isPdf = file && file.type === 'application/pdf';
       const sourceType = isPdf ? 'pdf' : url ? 'url' : 'text';
       const title = file?.name?.replace(/\.pdf$/i, '') || url || 'Untitled';
 
-      // 1. Insert note into database
+      // Generate a noteId upfront for storage path
+      const noteId = crypto.randomUUID();
+      let storagePath: string | null = null;
+
+      // 1. If PDF, upload to storage FIRST
+      if (isPdf && file) {
+        storagePath = `${user.id}/${noteId}/source.pdf`;
+        console.log('Selected file:', file.name, file.size, file.type);
+        console.log('Storage path:', storagePath);
+
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('uploads')
+          .upload(storagePath, file, {
+            upsert: false,
+            contentType: 'application/pdf',
+          });
+
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          toast.error(`Upload failed: ${uploadError.message}`);
+          setProcessing(false);
+          return;
+        }
+        console.log('Upload response:', uploadData);
+      }
+
+      // 2. Insert note into database (only after upload succeeds)
       const { data: noteData, error: noteError } = await supabase
         .from('notes')
-        .insert({ user_id: user.id, title })
+        .insert({ id: noteId, user_id: user.id, title })
         .select('id')
         .single();
 
       if (noteError || !noteData) throw new Error('Failed to create note');
-      const noteId = noteData.id;
+      console.log('Note created:', noteData.id);
 
-      let storagePath: string | null = null;
-
-      // 2. If PDF, upload to storage
-      if (isPdf && file) {
-        storagePath = `${user.id}/${noteId}/source.pdf`;
-        const { error: uploadError } = await supabase.storage
-          .from('uploads')
-          .upload(storagePath, file, { contentType: 'application/pdf' });
-        if (uploadError) throw new Error('Failed to upload file');
-      }
-
-      // 3. Call n8n webhook with JSON
+      // 3. Call n8n webhook
       const res = await fetch(webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: user.id,
-          noteId,
+          noteId: noteData.id,
           sourceType,
           sourceRef: isPdf ? storagePath : (url || null),
           rawText: text || null,
