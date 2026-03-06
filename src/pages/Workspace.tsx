@@ -82,20 +82,6 @@ Benefits:
           />
         )}
 
-        <CreateNoteDialog
-          open={createDialogOpen}
-          onOpenChange={setCreateDialogOpen}
-          onNoteCreated={({ title, content }) => {
-            const newNote: NoteData = {
-              id: Date.now().toString(),
-              title,
-              content,
-              created_at: new Date().toISOString(),
-            };
-            setNotes((prev) => [newNote, ...prev]);
-            setActiveNoteId(newNote.id);
-          }}
-        />
 
         {/* Content + AI */}
         <div className="flex-1 flex flex-col overflow-hidden">
