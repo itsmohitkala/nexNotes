@@ -17,7 +17,6 @@ export interface NoteData {
 const Workspace = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [notes, setNotes] = useState<NoteData[]>([
     {
       id: '1',
