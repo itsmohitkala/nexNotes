@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { WorkspaceSidebar } from '@/components/workspace/WorkspaceSidebar';
 import { NotesPanel } from '@/components/workspace/NotesPanel';
 import { AiAssistant } from '@/components/workspace/AiAssistant';
-import { CreateNoteDialog } from '@/components/workspace/CreateNoteDialog';
 import { Link, useNavigate } from 'react-router-dom';
 import { Layers, PanelLeftClose, PanelLeft, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
