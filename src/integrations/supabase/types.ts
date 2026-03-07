@@ -49,6 +49,44 @@ export type Database = {
           },
         ]
       }
+      chunks: {
+        Row: {
+          chunk_index: number
+          content: string
+          created_at: string
+          id: string
+          meta: Json
+          note_id: string
+          user_id: string
+        }
+        Insert: {
+          chunk_index: number
+          content: string
+          created_at?: string
+          id?: string
+          meta?: Json
+          note_id: string
+          user_id: string
+        }
+        Update: {
+          chunk_index?: number
+          content?: string
+          created_at?: string
+          id?: string
+          meta?: Json
+          note_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chunks_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: false
+            referencedRelation: "notes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
           created_at: string | null
@@ -111,12 +149,51 @@ export type Database = {
           },
         ]
       }
+      note_outputs: {
+        Row: {
+          created_at: string
+          note_id: string
+          structured: Json
+          summary: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          note_id: string
+          structured: Json
+          summary?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          note_id?: string
+          structured?: Json
+          summary?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "note_outputs_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: true
+            referencedRelation: "notes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notes: {
         Row: {
           content: string | null
           created_at: string | null
           document_id: string | null
+          error_message: string | null
           id: string
+          source_ref: string | null
+          source_type: string | null
+          status: string | null
           title: string
           updated_at: string | null
           user_id: string
@@ -125,7 +202,11 @@ export type Database = {
           content?: string | null
           created_at?: string | null
           document_id?: string | null
+          error_message?: string | null
           id?: string
+          source_ref?: string | null
+          source_type?: string | null
+          status?: string | null
           title?: string
           updated_at?: string | null
           user_id: string
@@ -134,7 +215,11 @@ export type Database = {
           content?: string | null
           created_at?: string | null
           document_id?: string | null
+          error_message?: string | null
           id?: string
+          source_ref?: string | null
+          source_type?: string | null
+          status?: string | null
           title?: string
           updated_at?: string | null
           user_id?: string
