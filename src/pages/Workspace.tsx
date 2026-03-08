@@ -320,6 +320,7 @@ const Workspace = () => {
               note={activeNoteForAssistant}
               pendingQuestion={pendingQuestion}
               onPendingHandled={() => setPendingQuestion(null)}
+              onClose={() => setAiPanelOpen(false)}
             />
           )}
         </div>
