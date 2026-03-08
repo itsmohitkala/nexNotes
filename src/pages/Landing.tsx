@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { FileText, MessageSquare, Zap, GraduationCap, BookOpen, Briefcase, ArrowRight, Highlighter, Brain, Github, NotebookPen, Users, BotMessageSquare } from 'lucide-react';
+import { FileText, MessageSquare, Zap, GraduationCap, BookOpen, Briefcase, ArrowRight, Highlighter, Brain, Github, NotebookPen, Users, BotMessageSquare, Bot, Copy, Send } from 'lucide-react';
 import { motion, useMotionValue, useTransform, animate, useInView } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
