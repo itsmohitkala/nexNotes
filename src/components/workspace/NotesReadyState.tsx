@@ -78,11 +78,14 @@ export const NotesReadyState = ({
     return () => document.removeEventListener('mouseup', handleSelection);
   }, [findSectionIndex]);
 
-  // Map new insights to their section
+  // Map new insights to their section at the time they arrive
   useEffect(() => {
-    if (insights.length > 0 && pendingSectionIndex !== null) {
+    if (insights.length > 0) {
       const latest = insights[insights.length - 1];
-      if (insightSectionMap[latest.id] === undefined) {
+      // If the insight already has a sectionIndex from parent, use it
+      if (latest.sectionIndex !== undefined && insightSectionMap[latest.id] === undefined) {
+        setInsightSectionMap(prev => ({ ...prev, [latest.id]: latest.sectionIndex! }));
+      } else if (insightSectionMap[latest.id] === undefined && pendingSectionIndex !== null) {
         setInsightSectionMap(prev => ({ ...prev, [latest.id]: pendingSectionIndex }));
         setPendingSectionIndex(null);
       }
@@ -97,7 +100,9 @@ export const NotesReadyState = ({
   }, [insights.length]);
 
   const handleAction = (action: string) => {
-    onHighlightAction(action, selectedText);
+    // Capture the section index NOW, before the async call
+    const capturedSection = pendingSectionIndex;
+    onHighlightAction(action, selectedText, capturedSection ?? undefined);
     setToolbarPos(null);
     window.getSelection()?.removeAllRanges();
   };
