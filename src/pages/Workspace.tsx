@@ -3,8 +3,8 @@ import { WorkspaceSidebar } from '@/components/workspace/WorkspaceSidebar';
 import { NotesPanel, NoteDisplay } from '@/components/workspace/NotesPanel';
 import { AiAssistant } from '@/components/workspace/AiAssistant';
 import { NoteInsight } from '@/components/workspace/NotesReadyState';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { PanelLeftClose, PanelLeft, Settings, LogOut, FileText } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { PanelLeftClose, PanelLeft, Settings, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -19,7 +19,6 @@ export interface NoteData {
 
 const Workspace = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [aiPanelOpen, setAiPanelOpen] = useState(true);
   const [searchParams] = useSearchParams();
   const noteIdFromUrl = searchParams.get('noteId');
 
@@ -175,7 +174,6 @@ const Workspace = () => {
     if (action === 'Ask question') {
       const defaultAskPrompt = 'Can you explain this highlighted text?';
       setPendingQuestion({ question: defaultAskPrompt, selectedText });
-      if (!aiPanelOpen) setAiPanelOpen(true);
       return;
     }
 
@@ -220,49 +218,45 @@ const Workspace = () => {
     : null;
 
   return (
-    <div className="h-screen flex flex-col bg-background">
-      {/* Top bar */}
-      <header className="flex items-center justify-between px-4 h-12 border-b border-border shrink-0 bg-card/50">
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-muted-foreground hover:text-foreground"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            {sidebarOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeft className="h-4 w-4" />}
-          </Button>
-          {note && (
-            <div className="flex items-center gap-2 ml-2">
-              <FileText className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-sm text-foreground font-medium truncate max-w-[300px]">{note.title}</span>
-            </div>
-          )}
-        </div>
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" size="sm" onClick={handleSignOut} className="gap-1.5 text-muted-foreground hover:text-foreground h-8">
-            <LogOut className="h-3.5 w-3.5" /> Log out
-          </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-            <Settings className="h-4 w-4" />
-          </Button>
-        </div>
-      </header>
+    <div className="h-screen flex bg-background">
+      {/* Sidebar */}
+      {sidebarOpen && (
+        <WorkspaceSidebar
+          notes={sidebarNotes}
+          activeNoteId={activeNoteId}
+          onSelectNote={handleSelectNote}
+          onCreateNote={() => navigate('/')}
+        />
+      )}
 
-      {/* Main area - 3 column layout */}
-      <div className="flex flex-1 overflow-hidden relative">
-        {sidebarOpen && (
-          <WorkspaceSidebar
-            notes={sidebarNotes}
-            activeNoteId={activeNoteId}
-            onSelectNote={handleSelectNote}
-            onCreateNote={() => navigate('/')}
-          />
-        )}
+      {/* Main content area - notes on top, AI below */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Top bar - minimal */}
+        <header className="flex items-center justify-between px-3 h-11 border-b border-border shrink-0">
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 text-muted-foreground hover:text-foreground"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              {sidebarOpen ? <PanelLeftClose className="h-3.5 w-3.5" /> : <PanelLeft className="h-3.5 w-3.5" />}
+            </Button>
+          </div>
+          <div className="flex items-center gap-0.5">
+            <Button variant="ghost" size="sm" onClick={handleSignOut} className="h-7 text-[13px] text-muted-foreground hover:text-foreground gap-1.5">
+              <LogOut className="h-3 w-3" /> Log out
+            </Button>
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground">
+              <Settings className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        </header>
 
-        <div className="flex-1 overflow-auto bg-background">
+        {/* Notes content - scrollable */}
+        <div className="flex-1 overflow-auto">
           {loading && !note ? (
-            <div className="flex-1 flex items-center justify-center min-h-[400px]">
+            <div className="flex items-center justify-center min-h-[400px]">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <div className="h-4 w-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
                 Loading…
@@ -281,12 +275,11 @@ const Workspace = () => {
           )}
         </div>
 
+        {/* AI Assistant - bottom panel */}
         <AiAssistant
           note={activeNoteForAssistant}
           pendingQuestion={pendingQuestion}
           onPendingHandled={() => setPendingQuestion(null)}
-          isOpen={aiPanelOpen}
-          onToggle={() => setAiPanelOpen(!aiPanelOpen)}
         />
       </div>
     </div>
