@@ -4,7 +4,9 @@ import { NotesPanel, NoteDisplay } from '@/components/workspace/NotesPanel';
 import { AiAssistant } from '@/components/workspace/AiAssistant';
 import { NoteInsight } from '@/components/workspace/NotesReadyState';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { User, Bot, PanelLeftClose, PanelLeft, FileText } from 'lucide-react';
+import { User, Bot, PanelLeftClose, PanelLeft, FileText, Download } from 'lucide-react';
+import { downloadMarkdown, downloadPdf } from '@/lib/export-note';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
@@ -279,6 +281,27 @@ const Workspace = () => {
             </div>
           </div>
           <div className="flex items-center gap-1">
+            {note && note.status === 'ready' && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    className="h-7 px-2 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors flex items-center gap-1.5"
+                    title="Export note"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Export</span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => downloadMarkdown(note.title, note.summary, note.structured, note.content)}>
+                    Download as Markdown
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => downloadPdf(note.title, note.summary, note.structured, note.content)}>
+                    Save as PDF
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
             {note && note.status === 'ready' && !aiPanelOpen && (
               <button
                 onClick={() => setAiPanelOpen(true)}
