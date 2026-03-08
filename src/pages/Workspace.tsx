@@ -138,6 +138,16 @@ const Workspace = () => {
               updated.summary = output.summary;
               updated.structured = output.structured as any;
             }
+            // Refresh sidebar when note becomes ready
+            if (user) {
+              const { data: sData } = await supabase
+                .from('notes')
+                .select('id, title, content, created_at')
+                .eq('user_id', user.id)
+                .eq('status', 'ready')
+                .order('created_at', { ascending: false });
+              if (sData) setSidebarNotes(sData.map(n => ({ ...n, content: n.content || '', created_at: n.created_at || '' })));
+            }
           }
 
           setNote(updated);
