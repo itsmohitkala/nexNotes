@@ -178,7 +178,7 @@ const Workspace = () => {
     navigate(`/workspace?noteId=${id}`, { replace: true });
   };
 
-  const handleHighlightAction = async (action: string, selectedText: string) => {
+  const handleHighlightAction = async (action: string, selectedText: string, sectionIndex?: number) => {
     if (!user || !activeNoteId) return;
 
     if (action === 'Ask question') {
@@ -202,6 +202,7 @@ const Workspace = () => {
           action,
           selectedText,
           answer: res.answer,
+          sectionIndex,
         },
       ]);
     } catch {
@@ -212,6 +213,7 @@ const Workspace = () => {
           action,
           selectedText,
           answer: 'Failed to get AI response. Please try again.',
+          sectionIndex,
         },
       ]);
     } finally {
