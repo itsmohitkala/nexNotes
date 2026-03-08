@@ -15,7 +15,7 @@ export interface NoteInsight {
   action: string;
   selectedText: string;
   answer: string;
-  sectionIndex?: number;
+  sectionIndex?: number; // set at creation time
 }
 
 interface Props {
