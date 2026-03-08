@@ -69,6 +69,12 @@ export default {
         },
         surface: "hsl(var(--surface))",
         "surface-hover": "hsl(var(--surface-hover))",
+        marker: {
+          purple: "hsl(var(--marker-purple))",
+          green: "hsl(var(--marker-green))",
+          orange: "hsl(var(--marker-orange))",
+          blue: "hsl(var(--marker-blue))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
