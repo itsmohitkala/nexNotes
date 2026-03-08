@@ -276,7 +276,7 @@ const Workspace = () => {
               {sidebarOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeft className="h-4 w-4" />}
             </button>
             <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <FileText className="h-4 w-4 text-muted-foreground" />
+              <NotebookText className="h-4 w-4 text-muted-foreground" />
               <span className="text-foreground font-medium">Notes</span>
             </div>
           </div>
