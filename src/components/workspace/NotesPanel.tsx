@@ -1,6 +1,7 @@
 import { NotesProcessingState } from './NotesProcessingState';
 import { NotesReadyState, StructuredNote, NoteInsight } from './NotesReadyState';
 import { NotesErrorState } from './NotesErrorState';
+import { EmptyState } from './EmptyState';
 
 export interface NoteDisplay {
   id: string;
@@ -24,11 +25,7 @@ interface Props {
 
 export const NotesPanel = ({ note, onRetry, onBack, insights, loadingInsight, onHighlightAction, onRemoveInsight }: Props) => {
   if (!note) {
-    return (
-      <div className="flex-1 flex items-center justify-center text-muted-foreground">
-        <p>Select or create a note to get started.</p>
-      </div>
-    );
+    return <EmptyState />;
   }
 
   if (note.status === 'processing') {
