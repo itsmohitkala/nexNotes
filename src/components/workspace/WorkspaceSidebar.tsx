@@ -30,14 +30,6 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
           </div>
           <span className="text-[15px] font-semibold text-foreground tracking-tight">NexNotes</span>
         </div>
-        <div className="flex items-center gap-0.5">
-          <button className="h-7 w-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
-            <Menu className="h-3.5 w-3.5" />
-          </button>
-          <button className="h-7 w-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
-            <LayoutGrid className="h-3.5 w-3.5" />
-          </button>
-        </div>
       </div>
 
       {/* Create + Search */}

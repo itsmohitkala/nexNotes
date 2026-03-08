@@ -245,25 +245,10 @@ const Workspace = () => {
               <span className="text-foreground font-medium">Notes</span>
             </div>
           </div>
-          <div className="flex items-center gap-0.5">
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent">
-              <Search className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent">
-              <Smile className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent">
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent">
-              <Bell className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent">
-              <Monitor className="h-4 w-4" />
-            </Button>
+          <div className="flex items-center gap-1">
             <button
               onClick={handleSignOut}
-              className="h-7 w-7 rounded-full bg-accent flex items-center justify-center ml-1 hover:bg-accent/80 transition-colors"
+              className="h-7 w-7 rounded-full bg-accent flex items-center justify-center hover:bg-accent/80 transition-colors"
             >
               <User className="h-3.5 w-3.5 text-muted-foreground" />
             </button>
