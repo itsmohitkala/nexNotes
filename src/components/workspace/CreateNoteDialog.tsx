@@ -84,7 +84,7 @@ export const CreateNoteDialog = ({ open, onOpenChange, onNoteCreated }: Props) =
         <div className="space-y-4 pt-2">
           {/* URL Input */}
           <div className="flex items-center gap-3 rounded-lg bg-secondary px-4 py-3">
-            <Link2 className="h-4 w-4 text-muted-foreground shrink-0" />
+            <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
             <input
               type="url"
               placeholder="Paste a URL..."
