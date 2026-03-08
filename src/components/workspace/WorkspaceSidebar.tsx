@@ -31,7 +31,7 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
       </div>
 
       {/* Divider */}
-      <div className="px-4 pb-3">
+      <div className="px-4 pb-3 mt-[10px]">
         <div className="h-px bg-border/50" />
       </div>
 
