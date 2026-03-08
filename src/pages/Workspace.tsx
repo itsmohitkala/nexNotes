@@ -36,10 +36,7 @@ const Workspace = () => {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setInsights([]);
-    setPendingQuestion(null);
-  }, [activeNoteId]);
+  // Don't clear insights or chat on note switch — persist them
 
   const fetchNote = useCallback(async (id: string) => {
     const { data, error } = await supabase
