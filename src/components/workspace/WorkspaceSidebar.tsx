@@ -21,6 +21,7 @@ interface Props {
   activeNoteId: string | null;
   onSelectNote: (id: string) => void;
   onCreateNote: () => void;
+  onDeleteNote: (id: string) => void;
 }
 
 export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNote }: Props) => {
