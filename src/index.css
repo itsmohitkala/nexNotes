@@ -22,9 +22,9 @@
     --primary-foreground: 0 0% 100%;
 
     /* #171a21 */
-    --secondary: 220 15% 11%;
-    /* #9ca3af */
-    --secondary-foreground: 218 11% 65%;
+    --secondary: 220 15% 13%;
+    /* brighter for readable body text */
+    --secondary-foreground: 220 9% 82%;
 
     --muted: 220 15% 13%;
     /* #9ca3af */
