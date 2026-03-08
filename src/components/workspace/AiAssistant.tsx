@@ -1,6 +1,6 @@
 import { NoteData } from '@/pages/Workspace';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Send, Bot, Loader2, AlertCircle, Copy, Trash2 } from 'lucide-react';
+import { Send, Bot, Loader2, AlertCircle, Copy, Trash2, PanelRightClose } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { askAiQuestion } from '@/lib/n8n-api';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,6 +10,7 @@ interface Props {
   note: NoteData | null;
   pendingQuestion?: { question: string; selectedText: string } | null;
   onPendingHandled?: () => void;
+  onClose?: () => void;
 }
 
 interface Message {
@@ -34,7 +35,7 @@ async function pollForAnswer(chatId: string, maxAttempts = 30, interval = 2000):
   throw new Error('Timed out waiting for AI response.');
 }
 
-export const AiAssistant = ({ note, pendingQuestion, onPendingHandled }: Props) => {
+export const AiAssistant = ({ note, pendingQuestion, onPendingHandled, onClose }: Props) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
@@ -115,15 +116,24 @@ export const AiAssistant = ({ note, pendingQuestion, onPendingHandled }: Props) 
       {/* Header */}
       <div className="px-5 py-4 border-b border-border flex items-center justify-between">
         <h2 className="text-[15px] font-semibold text-foreground">AI Assistant</h2>
-        {messages.length > 0 && (
+        <div className="flex items-center gap-1">
+          {messages.length > 0 && (
+            <button
+              onClick={() => setMessages([])}
+              className="text-muted-foreground hover:text-destructive transition-colors p-1 rounded-md hover:bg-accent"
+              title="Clear chat"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          )}
           <button
-            onClick={() => setMessages([])}
-            className="text-muted-foreground hover:text-destructive transition-colors p-1 rounded-md hover:bg-accent"
-            title="Clear chat"
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-accent"
+            title="Close AI Assistant"
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            <PanelRightClose className="h-3.5 w-3.5" />
           </button>
-        )}
+        </div>
       </div>
 
       {/* Messages */}
