@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { prettifyTitle } from '@/lib/format-title';
 import { X, Loader2, Sparkles, Star, Layers, AlignLeft, HelpCircle } from 'lucide-react';
 
 export interface StructuredNote {
@@ -287,7 +288,7 @@ export const NotesReadyState = ({
     <div className="relative w-full max-w-[900px] mx-auto px-8 md:px-12 py-10" ref={containerRef}>
       {/* Title */}
       <h1 className="text-[30px] font-bold text-foreground leading-tight tracking-tight mb-4">
-        {structured?.title || title}
+        {prettifyTitle(structured?.title || title)}
       </h1>
 
       {/* Summary */}
