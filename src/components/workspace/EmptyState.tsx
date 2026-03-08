@@ -1,25 +1,33 @@
 import { FileText, Plus, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
 
 export const EmptyState = () => {
-  const navigate = useNavigate();
-
   return (
     <div className="flex-1 flex items-center justify-center p-8">
-      <div className="flex flex-col items-center gap-5 max-w-xs text-center animate-fade-in">
-        <FileText className="h-10 w-10 text-muted-foreground/20" />
-        <div className="space-y-1.5">
-          <h2 className="text-base font-medium text-foreground">Select or create a note to begin</h2>
-          <p className="text-sm text-muted-foreground">
+      <div className="flex flex-col items-center gap-8 max-w-sm text-center animate-fade-in">
+        <div className="h-16 w-16 rounded-2xl bg-muted/50 border border-border/50 flex items-center justify-center">
+          <FileText className="h-7 w-7 text-muted-foreground/40" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-lg font-medium text-foreground tracking-tight">
+            Select or create a note
+          </h2>
+          <p className="text-sm text-muted-foreground leading-relaxed">
             Your AI-powered notes will appear here.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button onClick={() => navigate('/')} size="sm" className="gap-1.5 rounded-lg bg-accent hover:bg-accent/80 text-foreground border border-border">
-            <Plus className="h-3.5 w-3.5" /> Create Note
+        <div className="flex items-center gap-3">
+          <Button
+            size="sm"
+            className="gap-2 rounded-lg px-4 h-9 bg-foreground text-background hover:bg-foreground/90 font-medium text-xs"
+          >
+            <Plus className="h-3.5 w-3.5" /> New Note
           </Button>
-          <Button variant="outline" onClick={() => navigate('/')} size="sm" className="gap-1.5 rounded-lg border-border text-muted-foreground hover:text-foreground hover:bg-accent">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2 rounded-lg px-4 h-9 border-border/60 text-muted-foreground hover:text-foreground hover:bg-muted/50 font-medium text-xs"
+          >
             <Upload className="h-3.5 w-3.5" /> Upload
           </Button>
         </div>
