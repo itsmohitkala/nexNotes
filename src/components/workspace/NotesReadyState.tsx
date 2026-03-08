@@ -339,7 +339,7 @@ export const NotesReadyState = ({
       {toolbarPos && (
         <div
           data-toolbar
-          className="absolute z-50 flex items-center rounded-2xl bg-card/95 backdrop-blur-md border border-border/60 px-1.5 py-1 shadow-2xl shadow-black/10 animate-scale-in origin-bottom"
+          className="absolute z-50 flex items-center rounded-xl bg-card/95 backdrop-blur-md border border-border/60 px-1 py-0.5 shadow-2xl shadow-black/10 animate-scale-in origin-bottom"
           style={{
             left: toolbarPos.x,
             top: toolbarPos.y,
