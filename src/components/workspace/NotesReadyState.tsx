@@ -339,7 +339,7 @@ export const NotesReadyState = ({
       {toolbarPos && (
         <div
           data-toolbar
-          className="absolute z-50 flex items-center rounded-2xl bg-card/95 backdrop-blur-md border border-border/60 px-1.5 py-1 shadow-2xl shadow-black/10 animate-scale-in origin-bottom"
+          className="absolute z-50 flex items-center rounded-xl bg-card/95 backdrop-blur-md border border-border/60 px-1 py-0.5 shadow-2xl shadow-black/10 animate-scale-in origin-bottom"
           style={{
             left: toolbarPos.x,
             top: toolbarPos.y,
@@ -356,12 +356,12 @@ export const NotesReadyState = ({
             const Icon = icons[action] || Star;
             return (
               <React.Fragment key={action}>
-                {i > 0 && <div className="w-px h-6 bg-border/50 shrink-0" />}
+                {i > 0 && <div className="w-px h-5 bg-border/50 shrink-0" />}
                 <button
-                  className="text-[13px] px-4 py-2.5 rounded-xl hover:bg-accent/80 text-muted-foreground hover:text-foreground transition-all duration-150 font-medium flex items-center gap-2 active:scale-95"
+                  className="text-[12px] px-3 py-1.5 rounded-lg hover:bg-accent/80 text-muted-foreground hover:text-foreground transition-all duration-150 font-medium flex items-center gap-1.5 active:scale-95 whitespace-nowrap"
                   onClick={() => handleAction(action)}
                 >
-                  <Icon className="h-3.5 w-3.5" />
+                  <Icon className="h-3 w-3" />
                   {action === 'Ask question' ? 'Ask AI' : action}
                 </button>
               </React.Fragment>
