@@ -1,4 +1,5 @@
 import { NoteData } from '@/pages/Workspace';
+import { prettifyTitle } from '@/lib/format-title';
 import { Button } from '@/components/ui/button';
 import { Plus, Search, FileText, Menu, LayoutGrid, Settings, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
