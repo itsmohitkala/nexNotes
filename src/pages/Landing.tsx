@@ -60,11 +60,7 @@ const Landing = () => {
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-14">
           <Link to="/" className="flex items-center gap-2.5">
-            <div className="h-7 w-7 rounded-lg bg-brand flex items-center justify-center">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-brand-foreground">
-                <path d="m9 18 6-6-6-6" />
-              </svg>
-            </div>
+            <img src="/logo.png" alt="NexNotes" className="h-7 w-7 rounded-lg" />
             <span className="text-[15px] font-bold text-foreground tracking-tight">NexNotes</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-[13px] text-muted-foreground font-medium">
