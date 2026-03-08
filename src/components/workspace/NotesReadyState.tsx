@@ -37,6 +37,8 @@ export const NotesReadyState = ({
 }: Props) => {
   const [selectedText, setSelectedText] = useState('');
   const [toolbarPos, setToolbarPos] = useState<{ x: number; y: number } | null>(null);
+  const [insightAnchors, setInsightAnchors] = useState<Record<string, number>>({});
+  const pendingAnchorRef = useRef<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
