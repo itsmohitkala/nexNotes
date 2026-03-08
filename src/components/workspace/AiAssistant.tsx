@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Send, Bot, Loader2, AlertCircle, Copy } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { askAiQuestion } from '@/lib/n8n-api';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 interface Props {
@@ -14,6 +15,23 @@ interface Props {
 interface Message {
   role: 'user' | 'assistant' | 'error';
   content: string;
+}
+
+/** Poll note_chats table for the answer by record id */
+async function pollForAnswer(chatId: string, maxAttempts = 30, interval = 2000): Promise<string> {
+  for (let i = 0; i < maxAttempts; i++) {
+    const { data } = await supabase
+      .from('note_chats')
+      .select('answer')
+      .eq('id', chatId)
+      .single();
+
+    if (data?.answer && data.answer.trim().length > 0) {
+      return data.answer;
+    }
+    await new Promise(r => setTimeout(r, interval));
+  }
+  throw new Error('Timed out waiting for AI response.');
 }
 
 export const AiAssistant = ({ note, pendingQuestion, onPendingHandled }: Props) => {
@@ -56,7 +74,16 @@ export const AiAssistant = ({ note, pendingQuestion, onPendingHandled }: Props) 
       const payload = { userId: user.id, noteId: note.id, question, selectedText };
       console.log('[AiAssistant] Sending payload:', payload);
       const res = await askAiQuestion(payload);
-      setMessages((prev) => [...prev, { role: 'assistant', content: res.answer }]);
+
+      let answer: string;
+      if (res.asyncId) {
+        // Webhook returned an async id — poll note_chats for the real answer
+        answer = await pollForAnswer(res.asyncId);
+      } else {
+        answer = res.answer || 'No response received.';
+      }
+
+      setMessages((prev) => [...prev, { role: 'assistant', content: answer }]);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to get a response.';
       setMessages((prev) => [...prev, { role: 'error', content: errorMsg }]);

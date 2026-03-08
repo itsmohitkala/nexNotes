@@ -50,11 +50,15 @@ function normalizeAiResponse(raw: unknown): AiResponse {
   return { answer: String(raw) };
 }
 
-export async function askAiQuestion(payload: AiQuestionPayload): Promise<AiResponse> {
-  // Debug logging
+export interface AiQuestionResult {
+  /** If the webhook returned an async id, poll note_chats for the answer */
+  asyncId?: string;
+  answer?: string;
+}
+
+export async function askAiQuestion(payload: AiQuestionPayload): Promise<AiQuestionResult> {
   console.log('[n8n] askAiQuestion →', N8N_AI_QUESTION_WEBHOOK);
   console.log('[n8n] payload:', JSON.stringify(payload, null, 2));
-  console.log('[n8n] userId:', payload.userId, '| noteId:', payload.noteId, '| selectedText:', payload.selectedText);
 
   const res = await fetch(N8N_AI_QUESTION_WEBHOOK, {
     method: 'POST',
@@ -77,7 +81,17 @@ export async function askAiQuestion(payload: AiQuestionPayload): Promise<AiRespo
   }
 
   console.log('[n8n] raw response:', raw);
-  return normalizeAiResponse(raw);
+
+  // Check if it's an async response with an id
+  if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+    const obj = raw as Record<string, unknown>;
+    if (obj.success && typeof obj.id === 'string') {
+      return { asyncId: obj.id };
+    }
+  }
+
+  const normalized = normalizeAiResponse(raw);
+  return { answer: normalized.answer };
 }
 
 export async function performHighlightAction(payload: HighlightActionPayload): Promise<AiResponse> {
