@@ -46,6 +46,15 @@ const Landing = () => {
             <a href="#use-cases" className="hover:text-foreground transition-colors">Use Cases</a>
           </nav>
           <div className="flex items-center gap-2">
+            <a
+              href="https://github.com/itsmohitkala"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="h-8 w-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+              title="GitHub"
+            >
+              <Github className="h-4 w-4" />
+            </a>
             <ThemeToggle />
             {user ? (
               <>
