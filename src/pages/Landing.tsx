@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { FileText, MessageSquare, Zap, GraduationCap, BookOpen, Briefcase, ArrowRight, Highlighter, Brain, Github, NotebookPen, Users, BotMessageSquare } from 'lucide-react';
+import { FileText, MessageSquare, Zap, GraduationCap, BookOpen, Briefcase, ArrowRight, Highlighter, Brain, Github, NotebookPen, Users, BotMessageSquare, Bot, Copy, Send } from 'lucide-react';
 import { motion, useMotionValue, useTransform, animate, useInView } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
@@ -141,55 +141,67 @@ const Landing = () => {
                   <div className="w-2.5 h-2.5 rounded-full bg-marker-green/50" />
                   <span className="ml-3 text-[10px] text-muted-foreground font-medium tracking-wide">NexNotes</span>
                 </div>
-                <div className="grid grid-cols-5 min-h-[320px]">
-                  <div className="col-span-2 border-r border-border p-3.5 space-y-2 bg-accent/20">
+                <div className="flex min-h-[300px]">
+                  {/* Sidebar */}
+                  <div className="w-[90px] border-r border-border p-3 space-y-2 bg-accent/20 shrink-0">
                     <div className="text-[10px] font-semibold text-foreground mb-2.5 tracking-wide">Your Notes</div>
                     {['Research Paper', 'Biology Ch.4', 'Meeting Notes'].map((t, i) => (
-                      <div key={t} className={`text-[10px] px-2.5 py-1.5 rounded-lg ${i === 0 ? 'bg-brand/10 text-brand border border-brand/20 font-medium' : 'text-muted-foreground'}`}>
+                      <div key={t} className={`text-[10px] px-2 py-1.5 rounded-lg truncate ${i === 0 ? 'bg-brand/10 text-brand border border-brand/20 font-medium' : 'text-muted-foreground'}`}>
                         {t}
                       </div>
                     ))}
                   </div>
-                  <div className="col-span-3 flex flex-col">
-                    <div className="p-3.5 space-y-3 flex-1 border-b border-border">
-                      <div className="text-[10px] font-semibold text-foreground tracking-wide">AI-Generated Notes</div>
-                      <div className="space-y-2.5">
-                        {[
-                          { color: 'bg-marker-blue', textColor: 'text-marker-blue', label: 'Summary', w1: 'w-full', w2: 'w-4/5' },
-                          { color: 'bg-marker-purple', textColor: 'text-marker-purple', label: 'Key Points', w1: 'w-full', w2: 'w-3/5' },
-                          { color: 'bg-marker-green', textColor: 'text-marker-green', label: 'Concepts', w1: 'w-full', w2: 'w-2/3' },
-                        ].map((s) => (
-                          <div key={s.label} className="flex items-start gap-2">
-                            <div className={`w-1 rounded-full ${s.color} self-stretch shrink-0`} />
-                            <div className="space-y-1 flex-1">
-                              <div className={`text-[9px] font-semibold ${s.textColor} uppercase tracking-widest`}>{s.label}</div>
-                              <div className={`h-1.5 ${s.w1} rounded-full bg-muted`} />
-                              <div className={`h-1.5 ${s.w2} rounded-full bg-muted`} />
-                            </div>
+                  {/* Notes Content */}
+                  <div className="flex-1 p-3.5 space-y-3 border-r border-border">
+                    <div className="text-[10px] font-semibold text-foreground tracking-wide">AI-Generated Notes</div>
+                    <div className="space-y-2.5">
+                      {[
+                        { color: 'bg-marker-blue', textColor: 'text-marker-blue', label: 'Summary', w1: 'w-full', w2: 'w-4/5' },
+                        { color: 'bg-marker-purple', textColor: 'text-marker-purple', label: 'Key Points', w1: 'w-full', w2: 'w-3/5' },
+                        { color: 'bg-marker-green', textColor: 'text-marker-green', label: 'Concepts', w1: 'w-full', w2: 'w-2/3' },
+                      ].map((s) => (
+                        <div key={s.label} className="flex items-start gap-2">
+                          <div className={`w-1 rounded-full ${s.color} self-stretch shrink-0`} />
+                          <div className="space-y-1 flex-1">
+                            <div className={`text-[9px] font-semibold ${s.textColor} uppercase tracking-widest`}>{s.label}</div>
+                            <div className={`h-1.5 ${s.w1} rounded-full bg-muted`} />
+                            <div className={`h-1.5 ${s.w2} rounded-full bg-muted`} />
                           </div>
-                        ))}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-1.5 pt-1">
+                      <div className="text-[8px] px-2 py-0.5 rounded bg-brand/10 text-brand font-semibold">Explain</div>
+                      <div className="text-[8px] px-2 py-0.5 rounded bg-accent text-muted-foreground font-medium">Simplify</div>
+                      <div className="text-[8px] px-2 py-0.5 rounded bg-accent text-muted-foreground font-medium">Ask AI</div>
+                    </div>
+                  </div>
+                  {/* AI Assistant Panel (right side) */}
+                  <div className="w-[130px] shrink-0 flex flex-col bg-background">
+                    <div className="px-3 py-2.5 border-b border-border flex items-center gap-1.5">
+                      <Bot className="h-3 w-3 text-muted-foreground/30" />
+                      <span className="text-[9px] font-semibold text-foreground tracking-wide">AI Assistant</span>
+                    </div>
+                    <div className="flex-1 px-2.5 py-3 space-y-2.5 overflow-hidden">
+                      {/* User message */}
+                      <div className="rounded-xl bg-accent px-2.5 py-1.5">
+                        <p className="text-[8px] text-foreground leading-relaxed">What are the key findings?</p>
                       </div>
-                      <div className="flex items-center gap-1.5 pt-1">
-                        <div className="text-[8px] px-2 py-0.5 rounded bg-brand/10 text-brand font-semibold">Explain</div>
-                        <div className="text-[8px] px-2 py-0.5 rounded bg-accent text-muted-foreground font-medium">Simplify</div>
-                        <div className="text-[8px] px-2 py-0.5 rounded bg-accent text-muted-foreground font-medium">Ask AI</div>
+                      {/* AI response */}
+                      <div className="space-y-1">
+                        <p className="text-[8px] text-secondary-foreground/80 leading-relaxed px-0.5">The study identifies 3 main factors that contribute to improved learning…</p>
+                        <div className="flex items-center gap-1 px-0.5">
+                          <div className="text-[7px] text-muted-foreground/50 flex items-center gap-0.5 hover:text-foreground cursor-default">
+                            <Copy className="h-2 w-2" /> Copy
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    {/* AI Assistant Preview */}
-                    <div className="p-3 space-y-2 bg-accent/10">
-                      <div className="flex items-center gap-1.5 mb-1.5">
-                        <BotMessageSquare className="h-3 w-3 text-brand" />
-                        <span className="text-[9px] font-semibold text-foreground tracking-wide">AI Assistant</span>
-                      </div>
-                      <div className="rounded-lg bg-accent/60 px-2.5 py-1.5">
-                        <p className="text-[8px] text-muted-foreground">What are the key findings?</p>
-                      </div>
-                      <div className="rounded-lg bg-brand/10 px-2.5 py-1.5 border border-brand/10">
-                        <p className="text-[8px] text-foreground/80">The study identifies 3 main factors that contribute to improved learning outcomes…</p>
-                      </div>
-                      <div className="flex items-center gap-1.5 rounded-lg bg-accent/40 px-2.5 py-1.5">
-                        <span className="text-[8px] text-muted-foreground/60 flex-1">Ask a follow-up…</span>
-                        <ArrowRight className="h-2.5 w-2.5 text-muted-foreground/40" />
+                    {/* Input */}
+                    <div className="px-2 pb-2.5 pt-1 border-t border-border">
+                      <div className="flex items-center gap-1.5 bg-card rounded-xl border border-border px-2 py-1.5">
+                        <span className="text-[7px] text-muted-foreground/50 flex-1">Ask a question…</span>
+                        <Send className="h-2.5 w-2.5 text-muted-foreground/30" />
                       </div>
                     </div>
                   </div>
