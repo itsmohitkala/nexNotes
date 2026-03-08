@@ -219,20 +219,24 @@ export const NotesReadyState = ({
       {/* Insights */}
       {insights.map((insight) => (
         <div key={insight.id} className="mt-6 relative group animate-fade-in">
-          <button
-            onClick={() => onRemoveInsight(insight.id)}
-            className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md hover:bg-accent"
-          >
-            <X className="h-3.5 w-3.5 text-muted-foreground" />
-          </button>
-          <div className="flex items-center gap-2 mb-2">
-            <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">{insight.action}</span>
+          <div className="rounded-xl border border-border bg-card p-5">
+            <button
+              onClick={() => onRemoveInsight(insight.id)}
+              className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md hover:bg-accent"
+            >
+              <X className="h-3.5 w-3.5 text-muted-foreground" />
+            </button>
+            <div className="flex items-center gap-2 mb-3">
+              <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
+              <span className="text-[12px] font-semibold uppercase tracking-widest text-muted-foreground">{insight.action}</span>
+            </div>
+            {insight.selectedText && (
+              <p className="text-[13px] text-muted-foreground italic border-l-2 border-muted-foreground/30 pl-3 mb-3">
+                "{insight.selectedText.length > 120 ? insight.selectedText.slice(0, 120) + '…' : insight.selectedText}"
+              </p>
+            )}
+            <p className="text-[15px] text-secondary-foreground leading-[1.8]">{insight.answer}</p>
           </div>
-          <p className="text-[13px] text-muted-foreground italic border-l-2 border-border pl-3 mb-2">
-            "{insight.selectedText.length > 120 ? insight.selectedText.slice(0, 120) + '…' : insight.selectedText}"
-          </p>
-          <p className="text-[15px] text-secondary-foreground leading-[1.8]">{insight.answer}</p>
         </div>
       ))}
     </div>
