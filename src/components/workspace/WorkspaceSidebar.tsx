@@ -51,6 +51,11 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
         </div>
       </div>
 
+      {/* Divider */}
+      <div className="px-4 pb-3">
+        <div className="h-px bg-border/50" />
+      </div>
+
       {/* Your Notes label + list */}
       <div className="flex-1 overflow-auto flex flex-col min-h-0">
         <div className="px-5 pt-2 pb-2">
