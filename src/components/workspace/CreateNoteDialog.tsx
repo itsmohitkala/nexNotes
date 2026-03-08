@@ -116,7 +116,7 @@ export const CreateNoteDialog = ({ open, onOpenChange, onNoteCreated }: Props) =
               dragging ? 'border-accent bg-accent/5' : 'border-border hover:border-muted-foreground/40'
             }`}
           >
-            <Upload className="h-5 w-5 text-muted-foreground" />
+            <UploadCloud className="h-5 w-5 text-muted-foreground" />
             {file ? (
               <p className="text-sm text-foreground">{file.name}</p>
             ) : (
