@@ -348,12 +348,12 @@ export const NotesReadyState = ({
         >
           {ALL_ACTIONS.map((action, i) => {
             const icons: Record<string, React.ElementType> = {
-              'Explain': Star,
-              'Simplify': Layers,
+              'Explain': Lightbulb,
+              'Simplify': Minimize2,
               'Summarise': AlignLeft,
-              'Ask question': HelpCircle,
+              'Ask question': MessageCircle,
             };
-            const Icon = icons[action] || Star;
+            const Icon = icons[action] || Lightbulb;
             return (
               <React.Fragment key={action}>
                 {i > 0 && <div className="w-px h-5 bg-border/50 shrink-0" />}
