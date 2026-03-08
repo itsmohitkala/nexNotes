@@ -119,6 +119,7 @@ const Landing = () => {
           <span className="text-[15px] font-semibold text-foreground tracking-tight">NexNotes</span>
         </Link>
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           {user ? (
             <>
               <Link to="/workspace">

@@ -247,6 +247,7 @@ const Workspace = () => {
             </div>
           </div>
           <div className="flex items-center gap-1">
+            <ThemeToggle />
             <button
               onClick={handleSignOut}
               className="h-7 w-7 rounded-full bg-accent flex items-center justify-center hover:bg-accent/80 transition-colors"
