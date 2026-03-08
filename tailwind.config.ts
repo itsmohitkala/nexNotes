@@ -69,6 +69,12 @@ export default {
         },
         surface: "hsl(var(--surface))",
         "surface-hover": "hsl(var(--surface-hover))",
+        brand: {
+          DEFAULT: "hsl(var(--brand))",
+          foreground: "hsl(var(--brand-foreground))",
+          light: "hsl(var(--brand-light))",
+          dark: "hsl(var(--brand-dark))",
+        },
         marker: {
           purple: "hsl(var(--marker-purple))",
           green: "hsl(var(--marker-green))",

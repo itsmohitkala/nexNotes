@@ -37,6 +37,11 @@
 
     --radius: 0.5rem;
 
+    --brand: 252 56% 57%;
+    --brand-foreground: 0 0% 100%;
+    --brand-light: 252 56% 95%;
+    --brand-dark: 252 56% 48%;
+
     --sidebar-background: 220 20% 96%;
     --sidebar-foreground: 220 10% 40%;
     --sidebar-primary: 220 12% 20%;
@@ -83,6 +88,11 @@
 
     --border: 220 12% 17%;
     --input: 220 12% 17%;
+
+    --brand: 252 56% 62%;
+    --brand-foreground: 0 0% 100%;
+    --brand-light: 252 40% 18%;
+    --brand-dark: 252 56% 72%;
     --ring: 220 10% 40%;
 
     --sidebar-background: 220 14% 9%;
