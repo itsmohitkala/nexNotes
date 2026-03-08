@@ -96,7 +96,7 @@ export const CreateNoteDialog = ({ open, onOpenChange, onNoteCreated }: Props) =
 
           {/* Text Input */}
           <div className="flex items-start gap-3 rounded-lg bg-secondary px-4 py-3">
-            <ClipboardPaste className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+            <AlignLeft className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
             <textarea
               placeholder="Or type / paste text..."
               value={text}
