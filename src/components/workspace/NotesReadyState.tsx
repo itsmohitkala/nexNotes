@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { prettifyTitle } from '@/lib/format-title';
-import { X, Loader2, Sparkles, Star, Layers, AlignLeft, HelpCircle } from 'lucide-react';
+import { X, Loader2, Sparkles, Lightbulb, Minimize2, AlignLeft, MessageCircle } from 'lucide-react';
 
 export interface StructuredNote {
   title?: string;
@@ -348,12 +348,12 @@ export const NotesReadyState = ({
         >
           {ALL_ACTIONS.map((action, i) => {
             const icons: Record<string, React.ElementType> = {
-              'Explain': Star,
-              'Simplify': Layers,
+              'Explain': Lightbulb,
+              'Simplify': Minimize2,
               'Summarise': AlignLeft,
-              'Ask question': HelpCircle,
+              'Ask question': MessageCircle,
             };
-            const Icon = icons[action] || Star;
+            const Icon = icons[action] || Lightbulb;
             return (
               <React.Fragment key={action}>
                 {i > 0 && <div className="w-px h-5 bg-border/50 shrink-0" />}
