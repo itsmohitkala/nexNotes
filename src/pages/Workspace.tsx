@@ -281,6 +281,27 @@ const Workspace = () => {
             </div>
           </div>
           <div className="flex items-center gap-1">
+            {note && note.status === 'ready' && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    className="h-7 px-2 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors flex items-center gap-1.5"
+                    title="Export note"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Export</span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => downloadMarkdown(note.title, note.summary, note.structured, note.content)}>
+                    Download as Markdown
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => downloadPdf(note.title, note.summary, note.structured, note.content)}>
+                    Save as PDF
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
             {note && note.status === 'ready' && !aiPanelOpen && (
               <button
                 onClick={() => setAiPanelOpen(true)}
