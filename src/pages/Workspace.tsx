@@ -66,37 +66,49 @@ const Workspace = () => {
     if (noteIdFromUrl) setActiveNoteId(noteIdFromUrl);
   }, [noteIdFromUrl]);
 
-  // Fetch + poll the active note
+  // Fetch active note + realtime subscription
   useEffect(() => {
     if (!activeNoteId) {
       setNote(null);
       return;
     }
 
-    let cancelled = false;
-    let timer: ReturnType<typeof setTimeout>;
-
-    const poll = async () => {
+    // Initial fetch
+    const loadNote = async () => {
       setLoading(true);
       const fetched = await fetchNote(activeNoteId);
-      if (cancelled) return;
       setLoading(false);
-
-      if (fetched) {
-        setNote(fetched);
-        // Keep polling if still processing
-        if (fetched.status === 'processing') {
-          timer = setTimeout(poll, 3000);
-        }
-      } else {
-        setNote(null);
-      }
+      if (fetched) setNote(fetched);
+      else setNote(null);
     };
+    loadNote();
 
-    poll();
+    // Realtime subscription for instant updates
+    const channel = supabase
+      .channel(`note-${activeNoteId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'notes',
+          filter: `id=eq.${activeNoteId}`,
+        },
+        (payload) => {
+          const row = payload.new as any;
+          setNote({
+            id: row.id,
+            title: row.title,
+            content: row.content || '',
+            status: (row.status || 'processing') as NoteDisplay['status'],
+            error_message: row.error_message,
+          });
+        }
+      )
+      .subscribe();
+
     return () => {
-      cancelled = true;
-      clearTimeout(timer);
+      supabase.removeChannel(channel);
     };
   }, [activeNoteId, fetchNote]);
 
