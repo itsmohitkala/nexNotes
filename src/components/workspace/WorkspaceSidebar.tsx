@@ -91,9 +91,9 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
 
       {/* Bottom */}
       <div className="px-3 py-3 border-t border-border flex items-center gap-1">
-        <button className="h-8 w-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
+        <Link to="/settings" className="h-8 w-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
           <Settings className="h-4 w-4" />
-        </button>
+        </Link>
         <button className="h-8 w-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
           <RefreshCw className="h-4 w-4" />
         </button>
