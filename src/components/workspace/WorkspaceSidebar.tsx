@@ -1,6 +1,6 @@
 import { NoteData } from '@/pages/Workspace';
 import { Button } from '@/components/ui/button';
-import { Plus, Search, FileText, Menu, LayoutGrid, RefreshCw, Settings } from 'lucide-react';
+import { Plus, Search, FileText, Menu, LayoutGrid, Settings, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -20,21 +20,21 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
 
   return (
     <aside className="w-[240px] border-r border-border bg-card flex flex-col shrink-0 h-full">
-      {/* Logo + nav icons */}
+      {/* Logo */}
       <div className="px-4 pt-4 pb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="h-6 w-6 rounded bg-primary/20 flex items-center justify-center">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-primary">
+          <div className="h-6 w-6 rounded-md bg-accent flex items-center justify-center">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-foreground">
               <path d="m9 18 6-6-6-6"/>
             </svg>
           </div>
           <span className="text-[15px] font-semibold text-foreground tracking-tight">NexNotes</span>
         </div>
         <div className="flex items-center gap-0.5">
-          <button className="h-7 w-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+          <button className="h-7 w-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
             <Menu className="h-3.5 w-3.5" />
           </button>
-          <button className="h-7 w-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+          <button className="h-7 w-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
             <LayoutGrid className="h-3.5 w-3.5" />
           </button>
         </div>
@@ -44,12 +44,13 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
       <div className="px-3 space-y-2 pb-3">
         <Button
           size="sm"
-          className="w-full justify-start gap-2 h-9 text-[13px] bg-primary text-primary-foreground hover:bg-primary/90"
+          className="w-full justify-start gap-2 h-9 text-[13px] bg-accent hover:bg-accent/80 text-foreground border border-border"
+          variant="outline"
           onClick={onCreateNote}
         >
           <Plus className="h-3.5 w-3.5" /> New Note
         </Button>
-        <div className="flex items-center gap-2 rounded-lg px-3 py-2 bg-muted/30 border border-border/50">
+        <div className="flex items-center gap-2 rounded-lg px-3 py-2 bg-background border border-border">
           <Search className="h-3.5 w-3.5 text-muted-foreground" />
           <input
             placeholder="Search"
@@ -74,11 +75,11 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
               onClick={() => onSelectNote(note.id)}
               className={`w-full text-left px-3 py-2.5 rounded-lg text-[13px] transition-all mb-0.5 flex items-start gap-2.5 ${
                 isActive
-                  ? 'bg-muted text-foreground'
-                  : 'text-muted-foreground hover:bg-muted/40 hover:text-foreground'
+                  ? 'bg-accent text-foreground'
+                  : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
               }`}
             >
-              <FileText className="h-4 w-4 shrink-0 mt-0.5 text-primary/60" />
+              <FileText className="h-4 w-4 shrink-0 mt-0.5 text-muted-foreground" />
               <div className="min-w-0 flex-1">
                 <span className="block truncate font-medium">{note.title}</span>
                 {timeAgo && (
@@ -94,12 +95,12 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
         )}
       </div>
 
-      {/* Bottom icons */}
+      {/* Bottom */}
       <div className="px-3 py-3 border-t border-border flex items-center gap-1">
-        <button className="h-8 w-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+        <button className="h-8 w-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
           <Settings className="h-4 w-4" />
         </button>
-        <button className="h-8 w-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+        <button className="h-8 w-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
           <RefreshCw className="h-4 w-4" />
         </button>
       </div>
