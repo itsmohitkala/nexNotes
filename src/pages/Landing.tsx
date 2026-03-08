@@ -185,21 +185,23 @@ const Landing = () => {
                     {/* Messages area */}
                     <div className="flex-1 px-2.5 py-3 space-y-2.5 overflow-hidden">
                       {/* User message bubble */}
-                      <div className="rounded-xl bg-accent px-2.5 py-2">
-                        <p className="text-[8px] text-foreground leading-relaxed whitespace-pre-wrap">What are the key findings?</p>
+                      <div className="rounded-xl bg-accent px-2.5 py-2 space-y-1">
+                        <div className="h-1.5 w-full rounded-full bg-muted" />
+                        <div className="h-1.5 w-3/5 rounded-full bg-muted" />
                       </div>
                       {/* Assistant response */}
-                      <div className="space-y-1.5">
-                        <p className="text-[8px] text-secondary-foreground leading-[1.7] px-0.5 whitespace-pre-wrap">The study identifies 3 main factors that contribute to improved learning outcomes…</p>
-                        <div className="flex items-center gap-1 px-0.5">
-                          <div className="flex items-center gap-0.5 text-[7px] text-muted-foreground px-1.5 py-0.5 rounded-md hover:bg-accent cursor-default">
-                            <Copy className="h-2 w-2" /> Copy
-                          </div>
+                      <div className="space-y-1.5 px-0.5">
+                        <div className="h-1.5 w-full rounded-full bg-muted" />
+                        <div className="h-1.5 w-full rounded-full bg-muted" />
+                        <div className="h-1.5 w-4/5 rounded-full bg-muted" />
+                        <div className="flex items-center gap-0.5 text-[7px] text-muted-foreground pt-0.5">
+                          <Copy className="h-2 w-2" /> Copy
                         </div>
                       </div>
                       {/* Second user message */}
-                      <div className="rounded-xl bg-accent px-2.5 py-2">
-                        <p className="text-[8px] text-foreground leading-relaxed whitespace-pre-wrap">Explain factor 2 in detail</p>
+                      <div className="rounded-xl bg-accent px-2.5 py-2 space-y-1">
+                        <div className="h-1.5 w-full rounded-full bg-muted" />
+                        <div className="h-1.5 w-2/5 rounded-full bg-muted" />
                       </div>
                       {/* Thinking indicator */}
                       <div className="flex items-center gap-1.5 px-0.5">
