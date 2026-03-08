@@ -305,7 +305,7 @@ const Landing = () => {
                   <stat.icon className="h-5 w-5 text-brand" />
                 </div>
                 <div className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
-                  <AnimatedCounter target={stat.value} suffix={stat.suffix} />{stat.suffix}
+                  <AnimatedCounter target={stat.value} />
                 </div>
                 <p className="text-[13px] text-muted-foreground font-medium">{stat.label}</p>
               </motion.div>
