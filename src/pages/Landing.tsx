@@ -176,32 +176,42 @@ const Landing = () => {
                       <div className="text-[8px] px-2 py-0.5 rounded bg-accent text-muted-foreground font-medium">Ask AI</div>
                     </div>
                   </div>
-                  {/* AI Assistant Panel (right side) */}
-                  <div className="w-[130px] shrink-0 flex flex-col bg-background">
-                    <div className="px-3 py-2.5 border-b border-border flex items-center gap-1.5">
-                      <Bot className="h-3 w-3 text-muted-foreground/30" />
-                      <span className="text-[9px] font-semibold text-foreground tracking-wide">AI Assistant</span>
+                  {/* AI Assistant Panel (right side) — mirrors real AiAssistant component */}
+                  <div className="w-[140px] shrink-0 flex flex-col bg-background border-l border-border">
+                    {/* Header */}
+                    <div className="px-3 py-2.5 border-b border-border flex items-center justify-between">
+                      <span className="text-[10px] font-semibold text-foreground">AI Assistant</span>
                     </div>
+                    {/* Messages area */}
                     <div className="flex-1 px-2.5 py-3 space-y-2.5 overflow-hidden">
-                      {/* User message */}
-                      <div className="rounded-xl bg-accent px-2.5 py-1.5">
-                        <p className="text-[8px] text-foreground leading-relaxed">What are the key findings?</p>
+                      {/* User message bubble */}
+                      <div className="rounded-xl bg-accent px-2.5 py-2">
+                        <p className="text-[8px] text-foreground leading-relaxed whitespace-pre-wrap">What are the key findings?</p>
                       </div>
-                      {/* AI response */}
-                      <div className="space-y-1">
-                        <p className="text-[8px] text-secondary-foreground/80 leading-relaxed px-0.5">The study identifies 3 main factors that contribute to improved learning…</p>
+                      {/* Assistant response */}
+                      <div className="space-y-1.5">
+                        <p className="text-[8px] text-secondary-foreground leading-[1.7] px-0.5 whitespace-pre-wrap">The study identifies 3 main factors that contribute to improved learning outcomes…</p>
                         <div className="flex items-center gap-1 px-0.5">
-                          <div className="text-[7px] text-muted-foreground/50 flex items-center gap-0.5 hover:text-foreground cursor-default">
+                          <div className="flex items-center gap-0.5 text-[7px] text-muted-foreground px-1.5 py-0.5 rounded-md hover:bg-accent cursor-default">
                             <Copy className="h-2 w-2" /> Copy
                           </div>
                         </div>
                       </div>
+                      {/* Second user message */}
+                      <div className="rounded-xl bg-accent px-2.5 py-2">
+                        <p className="text-[8px] text-foreground leading-relaxed whitespace-pre-wrap">Explain factor 2 in detail</p>
+                      </div>
+                      {/* Thinking indicator */}
+                      <div className="flex items-center gap-1.5 px-0.5">
+                        <div className="h-2.5 w-2.5 rounded-full border border-muted-foreground/30 border-t-muted-foreground animate-spin" />
+                        <span className="text-[8px] text-muted-foreground">Thinking...</span>
+                      </div>
                     </div>
-                    {/* Input */}
-                    <div className="px-2 pb-2.5 pt-1 border-t border-border">
-                      <div className="flex items-center gap-1.5 bg-card rounded-xl border border-border px-2 py-1.5">
-                        <span className="text-[7px] text-muted-foreground/50 flex-1">Ask a question…</span>
-                        <Send className="h-2.5 w-2.5 text-muted-foreground/30" />
+                    {/* Input bar */}
+                    <div className="px-2 pb-2.5 pt-1.5 border-t border-border">
+                      <div className="flex items-center gap-1.5 bg-card rounded-xl border border-border px-2.5 py-1.5">
+                        <span className="text-[7px] text-muted-foreground flex-1">Ask a question...</span>
+                        <Send className="h-2.5 w-2.5 text-muted-foreground/40" />
                       </div>
                     </div>
                   </div>
