@@ -28,9 +28,27 @@ const Workspace = () => {
   const [sidebarNotes, setSidebarNotes] = useState<NoteData[]>([]);
   const [activeNoteId, setActiveNoteId] = useState<string | null>(noteIdFromUrl);
 
-  const [insights, setInsights] = useState<NoteInsight[]>([]);
-  const [loadingInsight, setLoadingInsight] = useState(false);
+  const [insightsByNote, setInsightsByNote] = useState<Record<string, NoteInsight[]>>({});
+  const [loadingInsightByNote, setLoadingInsightByNote] = useState<Record<string, boolean>>({});
   const [pendingQuestion, setPendingQuestion] = useState<{ question: string; selectedText: string } | null>(null);
+
+  // Derived per-note state
+  const insights = insightsByNote[activeNoteId ?? ''] ?? [];
+  const loadingInsight = loadingInsightByNote[activeNoteId ?? ''] ?? false;
+
+  const setInsights = useCallback((updater: NoteInsight[] | ((prev: NoteInsight[]) => NoteInsight[])) => {
+    const nid = activeNoteId ?? '';
+    setInsightsByNote(prev => {
+      const current = prev[nid] ?? [];
+      const next = typeof updater === 'function' ? updater(current) : updater;
+      return { ...prev, [nid]: next };
+    });
+  }, [activeNoteId]);
+
+  const setLoadingInsight = useCallback((val: boolean) => {
+    const nid = activeNoteId ?? '';
+    setLoadingInsightByNote(prev => ({ ...prev, [nid]: val }));
+  }, [activeNoteId]);
   const [aiPanelOpen, setAiPanelOpen] = useState(true);
 
   const { signOut, user } = useAuth();
