@@ -21,26 +21,26 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
   );
 
   return (
-    <aside className="w-[240px] border-r border-border bg-card flex flex-col shrink-0 h-full">
+    <aside className="w-[260px] border-r border-border bg-card flex flex-col shrink-0 h-full">
       {/* Logo */}
-      <div className="px-4 pt-5 pb-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <img src="/logo.png" alt="NexNotes" className="h-6 w-6 rounded-md" />
-          <span className="text-[15px] font-semibold text-foreground tracking-tight">NexNotes</span>
+      <div className="px-5 pt-6 pb-5 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2.5">
+          <img src="/logo.png" alt="NexNotes" className="h-7 w-7 rounded-md" />
+          <span className="text-[16px] font-semibold text-foreground tracking-tight">NexNotes</span>
         </Link>
       </div>
 
       {/* Create + Search */}
-      <div className="px-3 space-y-2 pb-4">
+      <div className="px-4 space-y-3 pb-5">
         <Button
           size="sm"
-          className="w-full justify-start gap-2 h-9 text-[13px] bg-accent hover:bg-accent/80 text-foreground border border-border"
+          className="w-full justify-start gap-2 h-10 text-[13px] bg-accent hover:bg-accent/80 text-foreground border border-border"
           variant="outline"
           onClick={onCreateNote}
         >
-          <Plus className="h-3.5 w-3.5" /> New Note
+          <Plus className="h-4 w-4" /> New Note
         </Button>
-        <div className="flex items-center gap-2 rounded-lg px-3 py-2 bg-background border border-border">
+        <div className="flex items-center gap-2 rounded-lg px-3 py-2.5 bg-background border border-border">
           <Search className="h-3.5 w-3.5 text-muted-foreground" />
           <input
             placeholder="Search"
@@ -53,7 +53,7 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
 
       {/* Your Notes label + list */}
       <div className="flex-1 overflow-auto flex flex-col min-h-0">
-        <div className="px-4 pt-2 pb-2">
+        <div className="px-5 pt-1 pb-3">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60">
             Your Notes
           </span>
