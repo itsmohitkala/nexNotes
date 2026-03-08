@@ -42,9 +42,7 @@ export const AiAssistant = ({ note, pendingQuestion, onPendingHandled }: Props) 
   const sendingRef = useRef(false);
   const { user } = useAuth();
 
-  useEffect(() => {
-    setMessages([]);
-  }, [note?.id]);
+  // Don't clear messages on note switch — persist chat history
 
   const handleSend = useCallback(async (questionOverride?: string, selectedTextOverride?: string | null) => {
     const question = (questionOverride || input).trim();
