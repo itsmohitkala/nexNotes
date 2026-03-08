@@ -37,6 +37,8 @@ export const NotesReadyState = ({
 }: Props) => {
   const [selectedText, setSelectedText] = useState('');
   const [toolbarPos, setToolbarPos] = useState<{ x: number; y: number } | null>(null);
+  const [insightAnchors, setInsightAnchors] = useState<Record<string, number>>({});
+  const pendingAnchorRef = useRef<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -60,7 +62,26 @@ export const NotesReadyState = ({
     return () => document.removeEventListener('mouseup', handleSelection);
   }, []);
 
+  // Track anchor for incoming insight
+  useEffect(() => {
+    if (insights.length > 0 && pendingAnchorRef.current !== null) {
+      const latest = insights[insights.length - 1];
+      if (!insightAnchors[latest.id]) {
+        setInsightAnchors(prev => ({ ...prev, [latest.id]: pendingAnchorRef.current! }));
+        pendingAnchorRef.current = null;
+      }
+    }
+  }, [insights]);
+
   const handleAction = (action: string) => {
+    // Capture the bottom Y of the selection relative to the container
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0 && containerRef.current) {
+      const range = sel.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+      const containerRect = containerRef.current.getBoundingClientRect();
+      pendingAnchorRef.current = rect.bottom - containerRect.top + containerRef.current.scrollTop;
+    }
     onHighlightAction(action, selectedText);
     setToolbarPos(null);
     window.getSelection()?.removeAllRanges();
@@ -208,37 +229,59 @@ export const NotesReadyState = ({
         </div>
       )}
 
-      {/* Loading insight */}
-      {loadingInsight && (
+      {/* Loading insight - positioned at pending anchor */}
+      {loadingInsight && pendingAnchorRef.current !== null && (
+        <div
+          className="absolute left-8 right-8 md:left-12 md:right-12 z-40 animate-fade-in"
+          style={{ top: pendingAnchorRef.current + 8 }}
+        >
+          <div className="flex items-center gap-3 py-3 px-4 rounded-xl border border-border bg-card">
+            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">Generating AI insight...</span>
+          </div>
+        </div>
+      )}
+
+      {/* Loading fallback when no anchor */}
+      {loadingInsight && pendingAnchorRef.current === null && (
         <div className="mt-8 flex items-center gap-3 py-3 animate-fade-in">
           <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
           <span className="text-sm text-muted-foreground">Generating AI insight...</span>
         </div>
       )}
 
-      {/* Insights */}
-      {insights.map((insight) => (
-        <div key={insight.id} className="mt-6 relative group animate-fade-in">
-          <div className="rounded-xl border border-border bg-card p-5">
-            <button
-              onClick={() => onRemoveInsight(insight.id)}
-              className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md hover:bg-accent"
-            >
-              <X className="h-3.5 w-3.5 text-muted-foreground" />
-            </button>
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-[12px] font-semibold uppercase tracking-widest text-muted-foreground">{insight.action}</span>
+      {/* Insights - positioned at their anchor points */}
+      {insights.map((insight) => {
+        const anchorY = insightAnchors[insight.id];
+        const isAnchored = anchorY !== undefined;
+
+        return (
+          <div
+            key={insight.id}
+            className={`relative group animate-fade-in ${isAnchored ? 'absolute left-8 right-8 md:left-12 md:right-12 z-30' : 'mt-6'}`}
+            style={isAnchored ? { top: anchorY + 8 } : undefined}
+          >
+            <div className="rounded-xl border border-border bg-card p-5 shadow-lg">
+              <button
+                onClick={() => onRemoveInsight(insight.id)}
+                className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md hover:bg-accent"
+              >
+                <X className="h-3.5 w-3.5 text-muted-foreground" />
+              </button>
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-[12px] font-semibold uppercase tracking-widest text-muted-foreground">{insight.action}</span>
+              </div>
+              {insight.selectedText && (
+                <p className="text-[13px] text-muted-foreground italic border-l-2 border-muted-foreground/30 pl-3 mb-3">
+                  "{insight.selectedText.length > 120 ? insight.selectedText.slice(0, 120) + '…' : insight.selectedText}"
+                </p>
+              )}
+              <p className="text-[15px] text-secondary-foreground leading-[1.8]">{insight.answer}</p>
             </div>
-            {insight.selectedText && (
-              <p className="text-[13px] text-muted-foreground italic border-l-2 border-muted-foreground/30 pl-3 mb-3">
-                "{insight.selectedText.length > 120 ? insight.selectedText.slice(0, 120) + '…' : insight.selectedText}"
-              </p>
-            )}
-            <p className="text-[15px] text-secondary-foreground leading-[1.8]">{insight.answer}</p>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
