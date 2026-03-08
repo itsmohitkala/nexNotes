@@ -69,7 +69,7 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
                   : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
               }`}
             >
-              <StickyNote className="h-4 w-4 shrink-0 mt-0.5 text-muted-foreground" />
+              <FileText className="h-3.5 w-3.5 shrink-0 mt-0.5 text-muted-foreground/70" />
               <div className="min-w-0 flex-1">
                 <span className="block truncate font-medium">{prettifyTitle(note.title)}</span>
                 {timeAgo && (

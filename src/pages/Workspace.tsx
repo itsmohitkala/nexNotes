@@ -288,7 +288,7 @@ const Workspace = () => {
                     className="h-7 px-2 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors flex items-center gap-1.5"
                     title="Export note"
                   >
-                    <Download className="h-3.5 w-3.5" />
+                    <ArrowDownToLine className="h-3.5 w-3.5" />
                     <span className="hidden sm:inline">Export</span>
                   </button>
                 </DropdownMenuTrigger>

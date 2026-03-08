@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { prettifyTitle } from '@/lib/format-title';
-import { X, Loader2, Sparkles, Star, Layers, AlignLeft, HelpCircle } from 'lucide-react';
+import { X, Loader2, Sparkles, Lightbulb, Minimize2, AlignLeft, MessageCircle } from 'lucide-react';
 
 export interface StructuredNote {
   title?: string;
