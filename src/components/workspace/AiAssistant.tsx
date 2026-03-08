@@ -35,7 +35,7 @@ async function pollForAnswer(chatId: string, maxAttempts = 30, interval = 2000):
   throw new Error('Timed out waiting for AI response.');
 }
 
-export const AiAssistant = ({ note, pendingQuestion, onPendingHandled }: Props) => {
+export const AiAssistant = ({ note, pendingQuestion, onPendingHandled, onClose }: Props) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
