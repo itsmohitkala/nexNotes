@@ -31,7 +31,7 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
       </div>
 
       {/* Create + Search */}
-      <div className="px-4 space-y-3 pb-5">
+      <div className="px-4 space-y-3 pb-6">
         <Button
           size="sm"
           className="w-full justify-start gap-2 h-10 text-[13px] bg-accent hover:bg-accent/80 text-foreground border border-border"
