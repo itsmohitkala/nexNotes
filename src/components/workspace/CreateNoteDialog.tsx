@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Link2, ClipboardPaste, UploadCloud } from 'lucide-react';
+import { Globe, AlignLeft, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 
