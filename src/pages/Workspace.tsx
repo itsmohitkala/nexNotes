@@ -110,15 +110,32 @@ const Workspace = () => {
           table: 'notes',
           filter: `id=eq.${activeNoteId}`,
         },
-        (payload) => {
+        async (payload) => {
           const row = payload.new as any;
-          setNote({
+          const status = (row.status || 'processing') as NoteDisplay['status'];
+
+          const updated: NoteDisplay = {
             id: row.id,
             title: row.title,
             content: row.content || '',
-            status: (row.status || 'processing') as NoteDisplay['status'],
+            status,
             error_message: row.error_message,
-          });
+          };
+
+          // Fetch structured output when note becomes ready
+          if (status === 'ready') {
+            const { data: output } = await supabase
+              .from('note_outputs')
+              .select('summary, structured')
+              .eq('note_id', row.id)
+              .single();
+            if (output) {
+              updated.summary = output.summary;
+              updated.structured = output.structured as any;
+            }
+          }
+
+          setNote(updated);
         }
       )
       .subscribe();
