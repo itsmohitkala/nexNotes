@@ -4,7 +4,7 @@ import { NotesPanel, NoteDisplay } from '@/components/workspace/NotesPanel';
 import { AiAssistant } from '@/components/workspace/AiAssistant';
 import { NoteInsight } from '@/components/workspace/NotesReadyState';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { User } from 'lucide-react';
+import { User, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
@@ -31,14 +31,12 @@ const Workspace = () => {
   const [insights, setInsights] = useState<NoteInsight[]>([]);
   const [loadingInsight, setLoadingInsight] = useState(false);
   const [pendingQuestion, setPendingQuestion] = useState<{ question: string; selectedText: string } | null>(null);
+  const [aiPanelOpen, setAiPanelOpen] = useState(true);
 
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setInsights([]);
-    setPendingQuestion(null);
-  }, [activeNoteId]);
+  // Don't clear insights or chat on note switch — persist them
 
   const fetchNote = useCallback(async (id: string) => {
     const { data, error } = await supabase
@@ -258,6 +256,16 @@ const Workspace = () => {
             </div>
           </div>
           <div className="flex items-center gap-1">
+            {note && note.status === 'ready' && (
+              <button
+                onClick={() => setAiPanelOpen(!aiPanelOpen)}
+                className="h-7 px-2 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors flex items-center gap-1.5"
+                title={aiPanelOpen ? 'Hide AI Assistant' : 'Show AI Assistant'}
+              >
+                <Bot className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">{aiPanelOpen ? 'Hide AI' : 'Show AI'}</span>
+              </button>
+            )}
             <ThemeToggle />
             <button
               onClick={handleSignOut}
@@ -307,7 +315,7 @@ const Workspace = () => {
           </div>
 
           {/* Right AI Panel */}
-          {note && note.status === 'ready' && (
+          {note && note.status === 'ready' && aiPanelOpen && (
             <AiAssistant
               note={activeNoteForAssistant}
               pendingQuestion={pendingQuestion}

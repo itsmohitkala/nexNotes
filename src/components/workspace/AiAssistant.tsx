@@ -1,6 +1,6 @@
 import { NoteData } from '@/pages/Workspace';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Send, Bot, Loader2, AlertCircle, Copy } from 'lucide-react';
+import { Send, Bot, Loader2, AlertCircle, Copy, Trash2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { askAiQuestion } from '@/lib/n8n-api';
 import { supabase } from '@/integrations/supabase/client';
@@ -42,9 +42,7 @@ export const AiAssistant = ({ note, pendingQuestion, onPendingHandled }: Props) 
   const sendingRef = useRef(false);
   const { user } = useAuth();
 
-  useEffect(() => {
-    setMessages([]);
-  }, [note?.id]);
+  // Don't clear messages on note switch — persist chat history
 
   const handleSend = useCallback(async (questionOverride?: string, selectedTextOverride?: string | null) => {
     const question = (questionOverride || input).trim();
@@ -115,8 +113,17 @@ export const AiAssistant = ({ note, pendingQuestion, onPendingHandled }: Props) 
   return (
     <div className="w-[320px] border-l border-border bg-background flex flex-col shrink-0 h-full">
       {/* Header */}
-      <div className="px-5 py-4 border-b border-border">
+      <div className="px-5 py-4 border-b border-border flex items-center justify-between">
         <h2 className="text-[15px] font-semibold text-foreground">AI Assistant</h2>
+        {messages.length > 0 && (
+          <button
+            onClick={() => setMessages([])}
+            className="text-muted-foreground hover:text-destructive transition-colors p-1 rounded-md hover:bg-accent"
+            title="Clear chat"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        )}
       </div>
 
       {/* Messages */}
