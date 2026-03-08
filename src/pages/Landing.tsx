@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { FileText, MessageSquare, Zap, GraduationCap, BookOpen, Briefcase, ArrowRight, Highlighter, Brain } from 'lucide-react';
+import { FileText, MessageSquare, Zap, GraduationCap, BookOpen, Briefcase, ArrowRight, Highlighter, Brain, Github } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const fadeUp = {
