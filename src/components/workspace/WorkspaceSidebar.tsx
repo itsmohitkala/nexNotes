@@ -23,7 +23,7 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
   return (
     <aside className="w-[260px] border-r border-border bg-card flex flex-col shrink-0 h-full">
       {/* Logo */}
-      <div className="px-5 pt-8 pb-6 flex items-center justify-between">
+      <div className="px-5 pt-6 pb-5 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5">
           <img src="/logo.png" alt="NexNotes" className="h-7 w-7 rounded-md" />
           <span className="text-[16px] font-semibold text-foreground tracking-tight">NexNotes</span>
@@ -31,7 +31,7 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
       </div>
 
       {/* Create + Search */}
-      <div className="px-4 space-y-3 pb-6">
+      <div className="px-4 space-y-3 pb-5">
         <Button
           size="sm"
           className="w-full justify-start gap-2 h-10 text-[13px] bg-accent hover:bg-accent/80 text-foreground border border-border"
@@ -52,13 +52,13 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
       </div>
 
       {/* Your Notes label + list */}
-      <div className="overflow-auto flex flex-col min-h-0 flex-1">
-        <div className="px-5 pt-4 pb-3">
+      <div className="flex-1 overflow-auto flex flex-col min-h-0">
+        <div className="px-5 pt-1 pb-3">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60">
             Your Notes
           </span>
         </div>
-        <div className="px-3 pb-2">
+        <div className="flex-1 overflow-auto px-2 pb-2">
           {filtered.map((note) => {
             const isActive = note.id === activeNoteId;
             const timeAgo = note.created_at
