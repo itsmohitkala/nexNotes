@@ -193,6 +193,7 @@ const Workspace = () => {
       .subscribe();
 
     return () => {
+      clearTimeout(timeoutId);
       supabase.removeChannel(channel);
     };
   }, [activeNoteId, fetchNote]);
