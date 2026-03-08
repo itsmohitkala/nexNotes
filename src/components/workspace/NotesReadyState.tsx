@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { prettifyTitle } from '@/lib/format-title';
 import { X, Loader2, Sparkles, Star, Layers, AlignLeft, HelpCircle } from 'lucide-react';
 
@@ -322,14 +322,14 @@ export const NotesReadyState = ({
       {/* Floating toolbar */}
       {toolbarPos && (
         <div
-          className="absolute z-50 flex items-center gap-0.5 rounded-xl bg-card border border-border px-1.5 py-1 shadow-xl animate-fade-in"
+          className="absolute z-50 flex items-center rounded-2xl bg-card/95 backdrop-blur-md border border-border/60 px-1 py-0.5 shadow-2xl shadow-black/10 animate-fade-in"
           style={{
             left: toolbarPos.x,
             top: toolbarPos.y,
             transform: 'translate(-50%, -100%)',
           }}
         >
-          {ALL_ACTIONS.map((action) => {
+          {ALL_ACTIONS.map((action, i) => {
             const icons: Record<string, React.ElementType> = {
               'Explain': Star,
               'Simplify': Layers,
@@ -338,14 +338,16 @@ export const NotesReadyState = ({
             };
             const Icon = icons[action] || Star;
             return (
-              <button
-                key={action}
-                className="text-[13px] px-3 py-1.5 rounded-lg hover:bg-accent text-muted-foreground hover:text-foreground transition-colors font-medium flex items-center gap-1.5"
-                onClick={() => handleAction(action)}
-              >
-                <Icon className="h-3.5 w-3.5" />
-                {action === 'Ask question' ? 'Ask AI' : action}
-              </button>
+              <React.Fragment key={action}>
+                {i > 0 && <div className="w-px h-5 bg-border/50 shrink-0" />}
+                <button
+                  className="text-[12px] px-3.5 py-2 rounded-xl hover:bg-accent/80 text-muted-foreground hover:text-foreground transition-all duration-150 font-medium flex items-center gap-1.5 active:scale-95"
+                  onClick={() => handleAction(action)}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {action === 'Ask question' ? 'Ask AI' : action}
+                </button>
+              </React.Fragment>
             );
           })}
         </div>
