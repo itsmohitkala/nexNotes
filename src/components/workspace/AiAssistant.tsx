@@ -10,6 +10,7 @@ interface Props {
   note: NoteData | null;
   pendingQuestion?: { question: string; selectedText: string } | null;
   onPendingHandled?: () => void;
+  onClose?: () => void;
 }
 
 interface Message {
