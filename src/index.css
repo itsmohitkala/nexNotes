@@ -6,61 +6,53 @@
 
 @layer base {
   :root {
-    /* #0f1115 → hsl(220 16% 7%) */
-    --background: 220 16% 7%;
-    /* #e5e7eb → hsl(220 9% 91%) */
-    --foreground: 220 9% 91%;
+    --background: 220 14% 8%;
+    --foreground: 220 9% 88%;
 
-    /* #171a21 → hsl(220 15% 11%) */
-    --card: 220 15% 11%;
-    --card-foreground: 220 9% 91%;
+    --card: 220 14% 10%;
+    --card-foreground: 220 9% 88%;
 
-    --popover: 220 15% 11%;
-    --popover-foreground: 220 9% 91%;
+    --popover: 220 14% 10%;
+    --popover-foreground: 220 9% 88%;
 
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
+    /* neutral warm white for primary actions */
+    --primary: 220 10% 78%;
+    --primary-foreground: 220 14% 8%;
 
-    /* #171a21 */
-    --secondary: 220 15% 13%;
-    /* brighter for readable body text */
-    --secondary-foreground: 220 9% 82%;
+    --secondary: 220 14% 12%;
+    --secondary-foreground: 220 9% 80%;
 
-    --muted: 220 15% 13%;
-    /* readable muted text */
-    --muted-foreground: 218 11% 55%;
+    --muted: 220 14% 12%;
+    --muted-foreground: 218 10% 50%;
 
-    /* #3b82f6 → hsl(217 91% 60%) */
-    --accent: 217 91% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 220 14% 16%;
+    --accent-foreground: 220 9% 88%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    /* #2a2f3a → hsl(220 16% 20%) */
-    --border: 220 16% 20%;
-    --input: 220 16% 20%;
-    --ring: 217 91% 60%;
+    --border: 220 12% 17%;
+    --input: 220 12% 17%;
+    --ring: 220 10% 40%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 220 16% 8%;
-    --sidebar-foreground: 218 11% 65%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 15% 14%;
-    --sidebar-accent-foreground: 220 9% 91%;
-    --sidebar-border: 220 16% 18%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-background: 220 14% 9%;
+    --sidebar-foreground: 218 10% 60%;
+    --sidebar-primary: 220 10% 78%;
+    --sidebar-primary-foreground: 220 14% 8%;
+    --sidebar-accent: 220 14% 13%;
+    --sidebar-accent-foreground: 220 9% 88%;
+    --sidebar-border: 220 12% 15%;
+    --sidebar-ring: 220 10% 40%;
 
-    --surface: 220 15% 13%;
-    --surface-hover: 220 15% 16%;
-    --glow: 217 91% 60%;
+    --surface: 220 14% 11%;
+    --surface-hover: 220 14% 14%;
 
-    --marker-purple: 270 70% 65%;
-    --marker-green: 152 60% 52%;
-    --marker-orange: 30 90% 60%;
-    --marker-blue: 217 91% 60%;
+    --marker-purple: 270 40% 60%;
+    --marker-green: 152 35% 48%;
+    --marker-orange: 30 55% 55%;
+    --marker-blue: 210 30% 55%;
   }
 }
 
@@ -75,17 +67,9 @@
 }
 
 @layer utilities {
-  .glow-border {
-    box-shadow: 0 0 0 1px hsl(var(--border)), 0 0 20px -5px hsl(var(--glow) / 0.1);
-  }
-  
-  .glow-accent {
-    box-shadow: 0 0 30px -5px hsl(var(--glow) / 0.2);
-  }
-
   .card-elevated {
     @apply rounded-lg border border-border bg-card;
-    box-shadow: 0 1px 3px 0 hsl(220 16% 5% / 0.4);
+    box-shadow: 0 1px 3px 0 hsl(220 14% 4% / 0.5);
   }
 
   .card-elevated-hover {
@@ -93,14 +77,14 @@
   }
 
   .card-elevated-hover:hover {
-    box-shadow: 0 4px 12px 0 hsl(220 16% 5% / 0.6);
-    border-color: hsl(var(--border) / 0.8);
+    box-shadow: 0 4px 12px 0 hsl(220 14% 4% / 0.6);
+    border-color: hsl(var(--border));
   }
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;

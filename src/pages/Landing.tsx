@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { FileText, Link2, Type, Upload, Zap, Sparkles } from 'lucide-react';
+import { Link2, Type, Upload, ArrowRight } from 'lucide-react';
 import { useState, useRef, useCallback } from 'react';
 import { toast } from 'sonner';
 
@@ -108,24 +108,26 @@ const Landing = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
-      <header className="flex items-center justify-between px-6 h-14 border-b border-border bg-card/30">
+      <header className="flex items-center justify-between px-6 h-14 border-b border-border">
         <Link to="/" className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-            <FileText className="h-4 w-4 text-primary" />
+          <div className="h-7 w-7 rounded-md bg-accent flex items-center justify-center">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-foreground">
+              <path d="m9 18 6-6-6-6"/>
+            </svg>
           </div>
-          <span className="text-base font-semibold text-foreground">NexNotes</span>
+          <span className="text-[15px] font-semibold text-foreground tracking-tight">NexNotes</span>
         </Link>
         <div className="flex items-center gap-2">
           {user ? (
             <>
               <Link to="/workspace">
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">Workspace</Button>
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground text-[13px]">Workspace</Button>
               </Link>
-              <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground hover:text-foreground">Log out</Button>
+              <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground hover:text-foreground text-[13px]">Log out</Button>
             </>
           ) : (
             <Link to="/login">
-              <Button variant="outline" size="sm">Sign in</Button>
+              <Button variant="outline" size="sm" className="text-[13px] border-border text-muted-foreground hover:text-foreground hover:bg-accent">Sign in</Button>
             </Link>
           )}
         </div>
@@ -133,39 +135,39 @@ const Landing = () => {
 
       {/* Hero */}
       <main className="flex-1 flex items-center justify-center px-4 py-16">
-        <div className="w-full max-w-2xl space-y-10">
-          <div className="text-center space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground leading-tight">
+        <div className="w-full max-w-xl space-y-8">
+          <div className="text-center space-y-3">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground leading-tight">
               Your cognitive workspace
             </h1>
-            <p className="text-muted-foreground text-lg max-w-lg mx-auto leading-relaxed">
+            <p className="text-muted-foreground text-[15px] max-w-md mx-auto leading-relaxed">
               Paste a link, drop a file, or type text — NexNotes transforms it into structured, AI-powered notes.
             </p>
           </div>
 
-          {/* Import Card */}
-          <div className="rounded-xl border border-border bg-card p-6 space-y-4 card-elevated">
+          {/* Import area */}
+          <div className="rounded-xl border border-border bg-card p-5 space-y-3">
             {/* URL Input */}
-            <div className="flex items-center gap-3 rounded-lg bg-muted border border-border px-4 py-3 focus-within:border-primary/40 transition-colors">
+            <div className="flex items-center gap-3 rounded-lg bg-background border border-border px-4 py-2.5 focus-within:border-muted-foreground/30 transition-colors">
               <Link2 className="h-4 w-4 text-muted-foreground shrink-0" />
               <input
                 type="url"
                 placeholder="Paste a URL..."
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground text-sm outline-none"
+                className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground text-[14px] outline-none"
               />
             </div>
 
             {/* Text Input */}
-            <div className="flex items-start gap-3 rounded-lg bg-muted border border-border px-4 py-3 focus-within:border-primary/40 transition-colors">
+            <div className="flex items-start gap-3 rounded-lg bg-background border border-border px-4 py-2.5 focus-within:border-muted-foreground/30 transition-colors">
               <Type className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
               <textarea
                 placeholder="Or type / paste text..."
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 rows={3}
-                className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground text-sm outline-none resize-none"
+                className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground text-[14px] outline-none resize-none"
               />
             </div>
 
@@ -175,16 +177,16 @@ const Landing = () => {
               onDragLeave={() => setDragging(false)}
               onDrop={handleDrop}
               onClick={() => fileRef.current?.click()}
-              className={`flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed py-8 cursor-pointer transition-all duration-200 ${
-                dragging ? 'border-primary bg-primary/5' : 'border-border hover:border-muted-foreground/40 hover:bg-muted/30'
+              className={`flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed py-7 cursor-pointer transition-all duration-200 ${
+                dragging ? 'border-muted-foreground/40 bg-accent/50' : 'border-border hover:border-muted-foreground/30 hover:bg-accent/30'
               }`}
             >
-              <Upload className="h-6 w-6 text-muted-foreground" />
+              <Upload className="h-5 w-5 text-muted-foreground" />
               {file ? (
-                <p className="text-sm text-foreground font-medium">{file.name}</p>
+                <p className="text-[13px] text-foreground font-medium">{file.name}</p>
               ) : (
-                <p className="text-sm text-muted-foreground">
-                  Drop a file here or <span className="text-primary font-medium">browse</span>
+                <p className="text-[13px] text-muted-foreground">
+                  Drop a file here or <span className="text-foreground font-medium">browse</span>
                 </p>
               )}
               <input
@@ -197,34 +199,23 @@ const Landing = () => {
             </div>
 
             <Button
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+              className="w-full bg-accent hover:bg-accent/80 text-foreground border border-border"
               size="lg"
               onClick={handleProcess}
               disabled={processing}
             >
               {processing ? (
                 <span className="flex items-center gap-2">
-                  <span className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                  <span className="h-4 w-4 border-2 border-foreground/30 border-t-foreground rounded-full animate-spin" />
                   Processing...
                 </span>
               ) : (
                 <span className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4" /> Process & Generate Notes
+                  Process & Generate Notes
+                  <ArrowRight className="h-4 w-4" />
                 </span>
               )}
             </Button>
-          </div>
-
-          {/* Footer badges */}
-          <div className="flex items-center justify-center gap-8 text-caption text-muted-foreground">
-            <span className="flex items-center gap-2">
-              <Zap className="h-3.5 w-3.5 text-primary" />
-              AI-powered extraction
-            </span>
-            <span className="flex items-center gap-2">
-              <FileText className="h-3.5 w-3.5 text-primary" />
-              Instant structuring
-            </span>
           </div>
         </div>
       </main>

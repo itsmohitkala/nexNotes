@@ -82,7 +82,7 @@ export const NotesReadyState = ({
 
       {/* Summary */}
       {(summary || structured?.oneLineSummary) && (
-        <p className="text-base text-secondary-foreground leading-[1.8] mb-10">
+        <p className="text-[15px] text-secondary-foreground leading-[1.8] mb-10">
           {summary || structured?.oneLineSummary}
         </p>
       )}
@@ -166,7 +166,7 @@ export const NotesReadyState = ({
           </section>
         )}
 
-        {/* Fallback: plain content */}
+        {/* Fallback */}
         {!hasStructured && content && (
           <section>
             <div className="text-[15px] text-secondary-foreground whitespace-pre-wrap leading-[1.8]">
@@ -197,7 +197,7 @@ export const NotesReadyState = ({
             return (
               <button
                 key={action}
-                className="text-[13px] px-3 py-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors font-medium flex items-center gap-1.5"
+                className="text-[13px] px-3 py-1.5 rounded-lg hover:bg-accent text-muted-foreground hover:text-foreground transition-colors font-medium flex items-center gap-1.5"
                 onClick={() => handleAction(action)}
               >
                 <Icon className="h-3.5 w-3.5" />
@@ -211,7 +211,7 @@ export const NotesReadyState = ({
       {/* Loading insight */}
       {loadingInsight && (
         <div className="mt-8 flex items-center gap-3 py-3 animate-fade-in">
-          <Loader2 className="h-4 w-4 animate-spin text-primary" />
+          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
           <span className="text-sm text-muted-foreground">Generating AI insight...</span>
         </div>
       )}
@@ -221,15 +221,15 @@ export const NotesReadyState = ({
         <div key={insight.id} className="mt-6 relative group animate-fade-in">
           <button
             onClick={() => onRemoveInsight(insight.id)}
-            className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md hover:bg-muted"
+            className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md hover:bg-accent"
           >
             <X className="h-3.5 w-3.5 text-muted-foreground" />
           </button>
           <div className="flex items-center gap-2 mb-2">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
-            <span className="text-[13px] font-semibold uppercase tracking-wider text-primary">{insight.action}</span>
+            <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">{insight.action}</span>
           </div>
-          <p className="text-[13px] text-muted-foreground italic border-l-2 border-muted pl-3 mb-2">
+          <p className="text-[13px] text-muted-foreground italic border-l-2 border-border pl-3 mb-2">
             "{insight.selectedText.length > 120 ? insight.selectedText.slice(0, 120) + '…' : insight.selectedText}"
           </p>
           <p className="text-[15px] text-secondary-foreground leading-[1.8]">{insight.answer}</p>

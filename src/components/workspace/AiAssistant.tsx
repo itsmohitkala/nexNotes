@@ -96,14 +96,14 @@ export const AiAssistant = ({ note, pendingQuestion, onPendingHandled }: Props) 
       <div className="flex-1 overflow-auto px-4 py-4 space-y-4" ref={scrollRef}>
         {messages.length === 0 && !loading && (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
-            <Bot className="h-8 w-8 text-muted-foreground/30 mb-3" />
-            <p className="text-sm text-muted-foreground">Ask anything about your notes.</p>
+            <Bot className="h-8 w-8 text-muted-foreground/20 mb-3" />
+            <p className="text-[13px] text-muted-foreground">Ask anything about your notes.</p>
           </div>
         )}
         {messages.map((msg, i) => (
           <div key={i} className="animate-fade-in">
             {msg.role === 'user' ? (
-              <div className="bg-card rounded-xl px-4 py-3 border border-border">
+              <div className="bg-accent rounded-xl px-4 py-3">
                 <p className="text-[13px] text-foreground whitespace-pre-wrap leading-relaxed">{msg.content}</p>
               </div>
             ) : msg.role === 'error' ? (
@@ -113,11 +113,11 @@ export const AiAssistant = ({ note, pendingQuestion, onPendingHandled }: Props) 
               </div>
             ) : (
               <div className="space-y-2">
-                <p className="text-[13px] text-foreground whitespace-pre-wrap leading-[1.7] px-1">{msg.content}</p>
+                <p className="text-[13px] text-secondary-foreground whitespace-pre-wrap leading-[1.7] px-1">{msg.content}</p>
                 <div className="flex items-center gap-1 px-1">
                   <button
                     onClick={() => handleCopy(msg.content)}
-                    className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-muted"
+                    className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-accent"
                   >
                     <Copy className="h-3 w-3" /> Copy
                   </button>
@@ -128,7 +128,7 @@ export const AiAssistant = ({ note, pendingQuestion, onPendingHandled }: Props) 
         ))}
         {loading && (
           <div className="flex items-center gap-2 px-1 animate-fade-in">
-            <Loader2 className="h-4 w-4 animate-spin text-primary" />
+            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
             <span className="text-[13px] text-muted-foreground">Thinking...</span>
           </div>
         )}
@@ -148,7 +148,7 @@ export const AiAssistant = ({ note, pendingQuestion, onPendingHandled }: Props) 
           <button
             onClick={() => handleSend()}
             disabled={loading || !note}
-            className="text-muted-foreground hover:text-primary transition-colors disabled:opacity-50"
+            className="text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
           >
             <Send className="h-4 w-4" />
           </button>

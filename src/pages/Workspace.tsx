@@ -243,43 +243,42 @@ const Workspace = () => {
               </button>
             )}
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted-foreground"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
               <span className="text-foreground font-medium">Notes</span>
             </div>
           </div>
-          <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+          <div className="flex items-center gap-0.5">
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent">
               <Search className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent">
               <Smile className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent">
               <ChevronDown className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent">
               <Bell className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent">
               <Monitor className="h-4 w-4" />
             </Button>
             <button
               onClick={handleSignOut}
-              className="h-7 w-7 rounded-full bg-muted flex items-center justify-center ml-1 hover:bg-muted/80 transition-colors"
+              className="h-7 w-7 rounded-full bg-accent flex items-center justify-center ml-1 hover:bg-accent/80 transition-colors"
             >
               <User className="h-3.5 w-3.5 text-muted-foreground" />
             </button>
           </div>
         </header>
 
-        {/* Content area: notes + AI panel side by side */}
+        {/* Content area */}
         <div className="flex-1 flex min-h-0">
-          {/* Notes workspace */}
           <div className="flex-1 overflow-auto">
             {loading && !note ? (
               <div className="flex items-center justify-center min-h-[400px]">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <div className="h-4 w-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                  <div className="h-4 w-4 border-2 border-muted-foreground/30 border-t-muted-foreground rounded-full animate-spin" />
                   Loading…
                 </div>
               </div>
@@ -296,7 +295,7 @@ const Workspace = () => {
             )}
           </div>
 
-          {/* Right AI Assistant Panel */}
+          {/* Right AI Panel */}
           {note && note.status === 'ready' && (
             <AiAssistant
               note={activeNoteForAssistant}
