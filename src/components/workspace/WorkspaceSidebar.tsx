@@ -30,6 +30,9 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
         </Link>
       </div>
 
+      {/* Spacer to push New Note to ~20% from top */}
+      <div style={{ marginTop: '10vh' }} />
+
       {/* Create + Search */}
       <div className="px-4 space-y-3 pb-5">
         <Button
@@ -51,8 +54,11 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
         </div>
       </div>
 
+      {/* Spacer to push Your Notes to ~76% from top */}
+      <div className="flex-1" />
+
       {/* Your Notes label + list */}
-      <div className="flex-1 overflow-auto flex flex-col min-h-0">
+      <div className="flex flex-col min-h-0" style={{ height: '24%' }}>
         <div className="px-5 pt-1 pb-3">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60">
             Your Notes
