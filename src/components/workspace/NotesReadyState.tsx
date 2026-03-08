@@ -160,7 +160,7 @@ export const NotesReadyState = ({
         {structured?.questions && structured.questions.length > 0 && (
           <section>
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="h-1.5 w-1.5 rounded-full bg-orange-400" />
+              <div className="h-1.5 w-1.5 rounded-full bg-marker-orange" />
               <h2 className="text-[18px] font-semibold text-foreground">Review Questions</h2>
             </div>
             <ol className="space-y-3 pl-4">
