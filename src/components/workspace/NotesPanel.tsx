@@ -1,38 +1,22 @@
-import { NoteData } from '@/pages/Workspace';
-import { useState, useEffect, useRef } from 'react';
+import { NotesProcessingState } from './NotesProcessingState';
+import { NotesReadyState } from './NotesReadyState';
+import { NotesErrorState } from './NotesErrorState';
 
-interface Props {
-  note: NoteData | null;
+export interface NoteDisplay {
+  id: string;
+  title: string;
+  content: string;
+  status: 'processing' | 'ready' | 'failed';
+  error_message?: string | null;
 }
 
-const AI_ACTIONS = ['Explain', 'Simplify', 'Summarise', 'Ask question'];
+interface Props {
+  note: NoteDisplay | null;
+  onRetry?: () => void;
+  onBack?: () => void;
+}
 
-export const NotesPanel = ({ note }: Props) => {
-  const [selectedText, setSelectedText] = useState('');
-  const [toolbarPos, setToolbarPos] = useState<{ x: number; y: number } | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleSelection = () => {
-      const sel = window.getSelection();
-      if (sel && sel.toString().trim().length > 0 && containerRef.current?.contains(sel.anchorNode)) {
-        const range = sel.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
-        const containerRect = containerRef.current!.getBoundingClientRect();
-        setSelectedText(sel.toString());
-        setToolbarPos({
-          x: rect.left - containerRect.left + rect.width / 2,
-          y: rect.top - containerRect.top - 10,
-        });
-      } else {
-        setToolbarPos(null);
-      }
-    };
-
-    document.addEventListener('mouseup', handleSelection);
-    return () => document.removeEventListener('mouseup', handleSelection);
-  }, []);
-
+export const NotesPanel = ({ note, onRetry, onBack }: Props) => {
   if (!note) {
     return (
       <div className="flex-1 flex items-center justify-center text-muted-foreground">
@@ -41,46 +25,19 @@ export const NotesPanel = ({ note }: Props) => {
     );
   }
 
-  return (
-    <div className="relative max-w-3xl mx-auto px-8 py-10" ref={containerRef}>
-      {/* Heading */}
-      <div className="inline-block rounded-md bg-secondary px-4 py-2 mb-6">
-        <h1 className="text-lg font-semibold text-foreground">{note.title}</h1>
-      </div>
+  if (note.status === 'processing') {
+    return <NotesProcessingState />;
+  }
 
-      {/* Notes panel */}
-      <div className="rounded-xl border-2 border-accent/40 bg-card p-6 glow-border relative">
-        <p className="text-xs uppercase tracking-wider text-muted-foreground mb-4">Notes panel</p>
-        <h2 className="text-base font-semibold text-foreground mb-3">{note.title}</h2>
-        <div className="text-sm text-secondary-foreground whitespace-pre-wrap leading-relaxed">
-          {note.content}
-        </div>
+  if (note.status === 'failed') {
+    return (
+      <NotesErrorState
+        errorMessage={note.error_message}
+        onRetry={onRetry || (() => {})}
+        onBack={onBack || (() => {})}
+      />
+    );
+  }
 
-        {/* Floating toolbar */}
-        {toolbarPos && (
-          <div
-            className="absolute z-50 flex items-center gap-1 rounded-lg bg-muted border border-border px-2 py-1 shadow-xl"
-            style={{
-              left: toolbarPos.x,
-              top: toolbarPos.y,
-              transform: 'translate(-50%, -100%)',
-            }}
-          >
-            {AI_ACTIONS.map((action) => (
-              <button
-                key={action}
-                className="text-xs px-2 py-1 rounded hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
-                onClick={() => {
-                  console.log(`AI action: ${action} on "${selectedText}"`);
-                  setToolbarPos(null);
-                }}
-              >
-                {action}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  return <NotesReadyState title={note.title} content={note.content || ''} />;
 };
