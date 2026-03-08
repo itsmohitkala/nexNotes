@@ -226,7 +226,7 @@ const Workspace = () => {
           notes={sidebarNotes}
           activeNoteId={activeNoteId}
           onSelectNote={handleSelectNote}
-          onCreateNote={() => navigate('/')}
+          onCreateNote={() => { setActiveNoteId(null); setNote(null); }}
         />
       )}
 
