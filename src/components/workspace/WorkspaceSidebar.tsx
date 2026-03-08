@@ -14,6 +14,7 @@ interface Props {
 
 export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNote }: Props) => {
   const [search, setSearch] = useState('');
+  const navigate = useNavigate();
 
   const filtered = notes.filter((n) =>
     n.title.toLowerCase().includes(search.toLowerCase())
