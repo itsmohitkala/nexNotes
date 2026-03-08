@@ -23,22 +23,87 @@ export interface AiResponse {
   answer: string;
 }
 
+/**
+ * Normalize n8n response which may be:
+ * - { answer: "..." }
+ * - plain text string
+ * - nested JSON: { data: { answer: "..." } }
+ * - array: [{ answer: "..." }]
+ */
+function normalizeAiResponse(raw: unknown): AiResponse {
+  if (typeof raw === 'string') {
+    return { answer: raw };
+  }
+  if (Array.isArray(raw) && raw.length > 0) {
+    return normalizeAiResponse(raw[0]);
+  }
+  if (raw && typeof raw === 'object') {
+    const obj = raw as Record<string, unknown>;
+    if (typeof obj.answer === 'string') return { answer: obj.answer };
+    if (typeof obj.output === 'string') return { answer: obj.output };
+    if (typeof obj.text === 'string') return { answer: obj.text };
+    if (typeof obj.response === 'string') return { answer: obj.response };
+    if (obj.data) return normalizeAiResponse(obj.data);
+    // Last resort: stringify
+    return { answer: JSON.stringify(raw) };
+  }
+  return { answer: String(raw) };
+}
+
 export async function askAiQuestion(payload: AiQuestionPayload): Promise<AiResponse> {
+  // Debug logging
+  console.log('[n8n] askAiQuestion →', N8N_AI_QUESTION_WEBHOOK);
+  console.log('[n8n] payload:', JSON.stringify(payload, null, 2));
+  console.log('[n8n] userId:', payload.userId, '| noteId:', payload.noteId, '| selectedText:', payload.selectedText);
+
   const res = await fetch(N8N_AI_QUESTION_WEBHOOK, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error(`AI question failed: ${res.status}`);
-  return res.json();
+
+  if (!res.ok) {
+    const errorText = await res.text().catch(() => '');
+    console.error('[n8n] AI question failed:', res.status, errorText);
+    throw new Error(`AI question failed (${res.status}): ${errorText || 'Unknown error'}`);
+  }
+
+  const contentType = res.headers.get('content-type') || '';
+  let raw: unknown;
+  if (contentType.includes('application/json')) {
+    raw = await res.json();
+  } else {
+    raw = await res.text();
+  }
+
+  console.log('[n8n] raw response:', raw);
+  return normalizeAiResponse(raw);
 }
 
 export async function performHighlightAction(payload: HighlightActionPayload): Promise<AiResponse> {
+  console.log('[n8n] performHighlightAction →', N8N_HIGHLIGHT_WEBHOOK);
+  console.log('[n8n] payload:', JSON.stringify(payload, null, 2));
+
   const res = await fetch(N8N_HIGHLIGHT_WEBHOOK, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error(`Highlight action failed: ${res.status}`);
-  return res.json();
+
+  if (!res.ok) {
+    const errorText = await res.text().catch(() => '');
+    console.error('[n8n] Highlight action failed:', res.status, errorText);
+    throw new Error(`Highlight action failed (${res.status}): ${errorText || 'Unknown error'}`);
+  }
+
+  const contentType = res.headers.get('content-type') || '';
+  let raw: unknown;
+  if (contentType.includes('application/json')) {
+    raw = await res.json();
+  } else {
+    raw = await res.text();
+  }
+
+  console.log('[n8n] raw response:', raw);
+  return normalizeAiResponse(raw);
 }

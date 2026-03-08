@@ -1,5 +1,5 @@
 import { NoteData } from '@/pages/Workspace';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { ChevronUp, ChevronDown, Send, Bot, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -22,6 +22,7 @@ export const AiAssistant = ({ note, pendingQuestion, onPendingHandled }: Props) 
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const sendingRef = useRef(false); // prevent duplicate sends
   const { user } = useAuth();
 
   // Reset messages when note changes
@@ -29,43 +30,78 @@ export const AiAssistant = ({ note, pendingQuestion, onPendingHandled }: Props) 
     setMessages([]);
   }, [note?.id]);
 
-  // Handle pending "Ask Question" from highlight toolbar
-  useEffect(() => {
-    if (pendingQuestion && note && user) {
-      setOpen(true);
-      handleSend(pendingQuestion.question, pendingQuestion.selectedText);
-      onPendingHandled?.();
+  const handleSend = useCallback(async (questionOverride?: string, selectedTextOverride?: string | null) => {
+    const question = (questionOverride || input).trim();
+
+    // Validation
+    if (!question) {
+      console.warn('[AiAssistant] Empty question, skipping send');
+      return;
     }
-  }, [pendingQuestion]);
+    if (!note?.id) {
+      setMessages((prev) => [...prev, { role: 'error', content: 'No note selected. Please select a note first.' }]);
+      return;
+    }
+    if (!user?.id) {
+      setMessages((prev) => [...prev, { role: 'error', content: 'Not authenticated. Please log in again.' }]);
+      return;
+    }
+    if (sendingRef.current) {
+      console.warn('[AiAssistant] Already sending, skipping duplicate');
+      return;
+    }
 
-  // Auto-scroll
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
-  }, [messages]);
+    sendingRef.current = true;
+    const selectedText = selectedTextOverride ?? null;
 
-  const handleSend = async (questionOverride?: string, selectedTextOverride?: string | null) => {
-    const question = questionOverride || input.trim();
-    if (!question || !note || !user) return;
-
-    const userMsg: Message = { role: 'user', content: question };
+    const userMsg: Message = {
+      role: 'user',
+      content: selectedText ? `[Highlighted: "${selectedText.slice(0, 80)}${selectedText.length > 80 ? '…' : ''}"]\n${question}` : question,
+    };
     setMessages((prev) => [...prev, userMsg]);
     if (!questionOverride) setInput('');
     setLoading(true);
 
     try {
-      const res = await askAiQuestion({
+      const payload = {
         userId: user.id,
         noteId: note.id,
         question,
-        selectedText: selectedTextOverride ?? null,
-      });
+        selectedText,
+      };
+
+      console.log('[AiAssistant] Sending payload:', payload);
+
+      const res = await askAiQuestion(payload);
       setMessages((prev) => [...prev, { role: 'assistant', content: res.answer }]);
-    } catch {
-      setMessages((prev) => [...prev, { role: 'error', content: 'Failed to get a response. Please try again.' }]);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to get a response.';
+      setMessages((prev) => [...prev, { role: 'error', content: errorMsg }]);
     } finally {
       setLoading(false);
+      sendingRef.current = false;
     }
-  };
+  }, [input, note?.id, user?.id]);
+
+  // Handle pending "Ask Question" from highlight toolbar
+  useEffect(() => {
+    if (!pendingQuestion || !note?.id || !user?.id) return;
+    if (sendingRef.current) return;
+
+    setOpen(true);
+    // Use a microtask to ensure state is settled
+    const timer = setTimeout(() => {
+      handleSend(pendingQuestion.question, pendingQuestion.selectedText);
+      onPendingHandled?.();
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [pendingQuestion, note?.id, user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-scroll
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+  }, [messages]);
 
   return (
     <div className="border-t border-border bg-card shrink-0">
@@ -105,7 +141,7 @@ export const AiAssistant = ({ note, pendingQuestion, onPendingHandled }: Props) 
                     <AlertCircle className="h-3 w-3" /> Error
                   </span>
                 )}
-                {msg.content}
+                <span className="whitespace-pre-wrap">{msg.content}</span>
               </div>
             ))}
             {loading && (
