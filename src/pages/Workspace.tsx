@@ -286,7 +286,7 @@ const Workspace = () => {
                 title="Show AI Assistant"
               >
                 <Bot className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Show AI</span>
+                <span className="hidden sm:inline">AI Assistant</span>
               </button>
             )}
             <ThemeToggle />
