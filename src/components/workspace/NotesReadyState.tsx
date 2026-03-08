@@ -1,13 +1,26 @@
 import { useState, useEffect, useRef } from 'react';
+import { BookOpen, Lightbulb, HelpCircle, BookMarked } from 'lucide-react';
+import { Json } from '@/integrations/supabase/types';
+
+export interface StructuredNote {
+  title?: string;
+  oneLineSummary?: string;
+  keyPoints?: string[];
+  sections?: { heading: string; points: string[] }[];
+  glossary?: { term: string; meaning: string }[];
+  questions?: string[];
+}
 
 interface Props {
   title: string;
   content: string;
+  summary?: string | null;
+  structured?: StructuredNote | null;
 }
 
 const AI_ACTIONS = ['Explain', 'Simplify', 'Summarise', 'Ask question'];
 
-export const NotesReadyState = ({ title, content }: Props) => {
+export const NotesReadyState = ({ title, content, summary, structured }: Props) => {
   const [selectedText, setSelectedText] = useState('');
   const [toolbarPos, setToolbarPos] = useState<{ x: number; y: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -33,20 +46,116 @@ export const NotesReadyState = ({ title, content }: Props) => {
     return () => document.removeEventListener('mouseup', handleSelection);
   }, []);
 
+  const hasStructured = structured && (
+    structured.sections?.length ||
+    structured.keyPoints?.length ||
+    structured.glossary?.length ||
+    structured.questions?.length
+  );
+
   return (
     <div className="relative max-w-3xl mx-auto px-8 py-10" ref={containerRef}>
-      {/* Heading */}
+      {/* Title */}
       <div className="inline-block rounded-md bg-secondary px-4 py-2 mb-6">
-        <h1 className="text-lg font-semibold text-foreground">{title}</h1>
+        <h1 className="text-lg font-semibold text-foreground">{structured?.title || title}</h1>
       </div>
 
-      {/* Notes panel */}
-      <div className="rounded-xl border-2 border-accent/40 bg-card p-6 glow-border relative">
-        <p className="text-xs uppercase tracking-wider text-muted-foreground mb-4">Notes panel</p>
-        <h2 className="text-base font-semibold text-foreground mb-3">{title}</h2>
-        <div className="text-sm text-secondary-foreground whitespace-pre-wrap leading-relaxed prose-content">
-          {content}
-        </div>
+      {/* Main notes card */}
+      <div className="rounded-xl border-2 border-accent/40 bg-card p-6 glow-border relative space-y-8">
+
+        {/* Summary */}
+        {(summary || structured?.oneLineSummary) && (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-accent">
+              <BookOpen className="h-4 w-4" />
+              <p className="text-xs uppercase tracking-wider font-semibold">Summary</p>
+            </div>
+            <p className="text-sm text-secondary-foreground leading-relaxed">
+              {summary || structured?.oneLineSummary}
+            </p>
+          </div>
+        )}
+
+        {/* Key Points */}
+        {structured?.keyPoints && structured.keyPoints.length > 0 && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-accent">
+              <Lightbulb className="h-4 w-4" />
+              <p className="text-xs uppercase tracking-wider font-semibold">Key Points</p>
+            </div>
+            <ul className="space-y-2">
+              {structured.keyPoints.map((point, i) => (
+                <li key={i} className="flex items-start gap-2.5 text-sm text-secondary-foreground leading-relaxed">
+                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-accent shrink-0" />
+                  {point}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Sections */}
+        {structured?.sections && structured.sections.length > 0 && (
+          <div className="space-y-6">
+            {structured.sections.map((section, i) => (
+              <div key={i} className="space-y-3">
+                <h2 className="text-base font-semibold text-foreground border-b border-border pb-2">
+                  {section.heading}
+                </h2>
+                <ul className="space-y-2 pl-1">
+                  {section.points.map((point, j) => (
+                    <li key={j} className="flex items-start gap-2.5 text-sm text-secondary-foreground leading-relaxed">
+                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-muted-foreground/40 shrink-0" />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Glossary */}
+        {structured?.glossary && structured.glossary.length > 0 && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-accent">
+              <BookMarked className="h-4 w-4" />
+              <p className="text-xs uppercase tracking-wider font-semibold">Glossary</p>
+            </div>
+            <div className="grid gap-2">
+              {structured.glossary.map((item, i) => (
+                <div key={i} className="rounded-lg bg-secondary/50 px-4 py-3">
+                  <span className="text-sm font-medium text-foreground">{item.term}</span>
+                  <span className="text-sm text-muted-foreground"> — {item.meaning}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Questions */}
+        {structured?.questions && structured.questions.length > 0 && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-accent">
+              <HelpCircle className="h-4 w-4" />
+              <p className="text-xs uppercase tracking-wider font-semibold">Review Questions</p>
+            </div>
+            <ol className="space-y-2 list-decimal list-inside">
+              {structured.questions.map((q, i) => (
+                <li key={i} className="text-sm text-secondary-foreground leading-relaxed">
+                  {q}
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+
+        {/* Fallback: plain content if no structured data */}
+        {!hasStructured && content && (
+          <div className="text-sm text-secondary-foreground whitespace-pre-wrap leading-relaxed">
+            {content}
+          </div>
+        )}
 
         {/* Floating toolbar */}
         {toolbarPos && (

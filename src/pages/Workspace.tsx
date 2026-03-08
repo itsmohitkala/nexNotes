@@ -28,7 +28,7 @@ const Workspace = () => {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
 
-  // Fetch a single note by ID
+  // Fetch a single note by ID, including note_outputs
   const fetchNote = useCallback(async (id: string) => {
     const { data, error } = await supabase
       .from('notes')
@@ -38,13 +38,29 @@ const Workspace = () => {
 
     if (error || !data) return null;
 
-    return {
+    const noteDisplay: NoteDisplay = {
       id: data.id,
       title: data.title,
       content: data.content || '',
       status: (data.status || 'processing') as NoteDisplay['status'],
       error_message: data.error_message,
-    } satisfies NoteDisplay;
+    };
+
+    // Fetch structured output if ready
+    if (noteDisplay.status === 'ready') {
+      const { data: output } = await supabase
+        .from('note_outputs')
+        .select('summary, structured')
+        .eq('note_id', id)
+        .single();
+
+      if (output) {
+        noteDisplay.summary = output.summary;
+        noteDisplay.structured = output.structured as any;
+      }
+    }
+
+    return noteDisplay;
   }, []);
 
   // Fetch sidebar notes list
@@ -94,15 +110,32 @@ const Workspace = () => {
           table: 'notes',
           filter: `id=eq.${activeNoteId}`,
         },
-        (payload) => {
+        async (payload) => {
           const row = payload.new as any;
-          setNote({
+          const status = (row.status || 'processing') as NoteDisplay['status'];
+
+          const updated: NoteDisplay = {
             id: row.id,
             title: row.title,
             content: row.content || '',
-            status: (row.status || 'processing') as NoteDisplay['status'],
+            status,
             error_message: row.error_message,
-          });
+          };
+
+          // Fetch structured output when note becomes ready
+          if (status === 'ready') {
+            const { data: output } = await supabase
+              .from('note_outputs')
+              .select('summary, structured')
+              .eq('note_id', row.id)
+              .single();
+            if (output) {
+              updated.summary = output.summary;
+              updated.structured = output.structured as any;
+            }
+          }
+
+          setNote(updated);
         }
       )
       .subscribe();

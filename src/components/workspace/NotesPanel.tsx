@@ -1,5 +1,5 @@
 import { NotesProcessingState } from './NotesProcessingState';
-import { NotesReadyState } from './NotesReadyState';
+import { NotesReadyState, StructuredNote } from './NotesReadyState';
 import { NotesErrorState } from './NotesErrorState';
 
 export interface NoteDisplay {
@@ -8,6 +8,8 @@ export interface NoteDisplay {
   content: string;
   status: 'processing' | 'ready' | 'failed';
   error_message?: string | null;
+  summary?: string | null;
+  structured?: StructuredNote | null;
 }
 
 interface Props {
@@ -39,5 +41,12 @@ export const NotesPanel = ({ note, onRetry, onBack }: Props) => {
     );
   }
 
-  return <NotesReadyState title={note.title} content={note.content || ''} />;
+  return (
+    <NotesReadyState
+      title={note.title}
+      content={note.content || ''}
+      summary={note.summary}
+      structured={note.structured}
+    />
+  );
 };
