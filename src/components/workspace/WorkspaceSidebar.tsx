@@ -24,8 +24,10 @@ interface Props {
   onDeleteNote: (id: string) => void;
 }
 
-export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNote }: Props) => {
+export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNote, onDeleteNote }: Props) => {
   const [search, setSearch] = useState('');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState<{ id: string; title: string } | null>(null);
 
   const filtered = notes.filter((n) =>
     n.title.toLowerCase().includes(search.toLowerCase())
