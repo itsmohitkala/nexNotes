@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { X, Loader2, Sparkles, Star, Layers, AlignLeft, HelpCircle } from 'lucide-react';
 
 export interface StructuredNote {
@@ -15,6 +15,7 @@ export interface NoteInsight {
   action: string;
   selectedText: string;
   answer: string;
+  sectionIndex?: number;
 }
 
 interface Props {
@@ -37,10 +38,21 @@ export const NotesReadyState = ({
 }: Props) => {
   const [selectedText, setSelectedText] = useState('');
   const [toolbarPos, setToolbarPos] = useState<{ x: number; y: number } | null>(null);
-  const [insightAnchors, setInsightAnchors] = useState<Record<string, number>>({});
-  const [selectionAnchorY, setSelectionAnchorY] = useState<number | null>(null);
-  const pendingAnchorRef = useRef<number | null>(null);
+  const [insightSectionMap, setInsightSectionMap] = useState<Record<string, number>>({});
+  const [pendingSectionIndex, setPendingSectionIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const sectionRefs = useRef<(HTMLElement | null)[]>([]);
+  const latestInsightRef = useRef<HTMLDivElement>(null);
+
+  // Find which section index a DOM node belongs to
+  const findSectionIndex = useCallback((node: Node | null): number => {
+    if (!containerRef.current || !node) return -1;
+    const sections = sectionRefs.current;
+    for (let i = 0; i < sections.length; i++) {
+      if (sections[i]?.contains(node)) return i;
+    }
+    return sections.length - 1; // fallback to last section
+  }, []);
 
   useEffect(() => {
     const handleSelection = () => {
@@ -49,50 +61,42 @@ export const NotesReadyState = ({
         const range = sel.getRangeAt(0);
         const rect = range.getBoundingClientRect();
         const containerRect = containerRef.current.getBoundingClientRect();
-        const anchorY = rect.bottom - containerRect.top + containerRef.current.scrollTop;
+        const sectionIdx = findSectionIndex(sel.anchorNode);
 
         setSelectedText(sel.toString());
-        setSelectionAnchorY(anchorY);
+        setPendingSectionIndex(sectionIdx);
         setToolbarPos({
           x: rect.left - containerRect.left + rect.width / 2,
           y: rect.top - containerRect.top - 10,
         });
       } else {
         setToolbarPos(null);
-        setSelectionAnchorY(null);
       }
     };
 
     document.addEventListener('mouseup', handleSelection);
     return () => document.removeEventListener('mouseup', handleSelection);
-  }, []);
+  }, [findSectionIndex]);
 
-  // Track anchor for incoming insight
+  // Map new insights to their section
   useEffect(() => {
-    if (insights.length > 0 && pendingAnchorRef.current !== null) {
+    if (insights.length > 0 && pendingSectionIndex !== null) {
       const latest = insights[insights.length - 1];
-      if (insightAnchors[latest.id] === undefined) {
-        setInsightAnchors(prev => ({ ...prev, [latest.id]: pendingAnchorRef.current! }));
-        pendingAnchorRef.current = null;
+      if (insightSectionMap[latest.id] === undefined) {
+        setInsightSectionMap(prev => ({ ...prev, [latest.id]: pendingSectionIndex }));
+        setPendingSectionIndex(null);
       }
     }
-  }, [insights, insightAnchors]);
+  }, [insights, insightSectionMap, pendingSectionIndex]);
+
+  // Auto-scroll to newly added insight
+  useEffect(() => {
+    if (insights.length > 0 && latestInsightRef.current) {
+      latestInsightRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [insights.length]);
 
   const handleAction = (action: string) => {
-    // Use stored selection anchor so click events don't lose position
-    pendingAnchorRef.current = selectionAnchorY;
-
-    // Fallback if selection anchor wasn't captured
-    if (pendingAnchorRef.current === null) {
-      const sel = window.getSelection();
-      if (sel && sel.rangeCount > 0 && containerRef.current) {
-        const range = sel.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
-        const containerRect = containerRef.current.getBoundingClientRect();
-        pendingAnchorRef.current = rect.bottom - containerRect.top + containerRef.current.scrollTop;
-      }
-    }
-
     onHighlightAction(action, selectedText);
     setToolbarPos(null);
     window.getSelection()?.removeAllRanges();
@@ -104,6 +108,175 @@ export const NotesReadyState = ({
     structured.glossary?.length ||
     structured.questions?.length
   );
+
+  // Collect all content sections into an ordered list for rendering
+  const contentSections: { key: string; element: React.ReactNode }[] = [];
+  let sectionCounter = 0;
+
+  // Key Points
+  if (structured?.keyPoints && structured.keyPoints.length > 0) {
+    const idx = sectionCounter++;
+    contentSections.push({
+      key: `keypoints-${idx}`,
+      element: (
+        <section ref={el => { sectionRefs.current[idx] = el; }}>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="h-5 w-1 rounded-full bg-marker-purple" />
+            <h2 className="text-[18px] font-semibold text-foreground">Key Points</h2>
+          </div>
+          <ul className="space-y-2.5 ml-4">
+            {structured.keyPoints!.map((point, i) => (
+              <li key={i} className="text-[15px] text-secondary-foreground leading-[1.8] flex items-start gap-3">
+                <span className="mt-[11px] h-[5px] w-[5px] rounded-full bg-muted-foreground/40 shrink-0" />
+                <span>{point}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ),
+    });
+  }
+
+  // Sections
+  if (structured?.sections && structured.sections.length > 0) {
+    structured.sections.forEach((section, i) => {
+      const idx = sectionCounter++;
+      contentSections.push({
+        key: `section-${idx}`,
+        element: (
+          <section ref={el => { sectionRefs.current[idx] = el; }}>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-5 w-1 rounded-full bg-marker-green" />
+              <h2 className="text-[18px] font-semibold text-foreground">{section.heading}</h2>
+            </div>
+            <ul className="space-y-2.5 ml-4">
+              {section.points.map((point, j) => (
+                <li key={j} className="text-[15px] text-secondary-foreground leading-[1.8] flex items-start gap-3">
+                  <span className="mt-[11px] h-[5px] w-[5px] rounded-full bg-muted-foreground/30 shrink-0" />
+                  <span>{point}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ),
+      });
+    });
+  }
+
+  // Glossary
+  if (structured?.glossary && structured.glossary.length > 0) {
+    const idx = sectionCounter++;
+    contentSections.push({
+      key: `glossary-${idx}`,
+      element: (
+        <section ref={el => { sectionRefs.current[idx] = el; }}>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="h-5 w-1 rounded-full bg-marker-blue" />
+            <h2 className="text-[18px] font-semibold text-foreground">Glossary</h2>
+          </div>
+          <dl className="space-y-2.5 ml-4">
+            {structured.glossary!.map((item, i) => (
+              <div key={i}>
+                <dt className="text-[15px] font-semibold text-foreground inline">{item.term}</dt>
+                <dd className="text-[15px] text-secondary-foreground inline"> — {item.meaning}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      ),
+    });
+  }
+
+  // Questions
+  if (structured?.questions && structured.questions.length > 0) {
+    const idx = sectionCounter++;
+    contentSections.push({
+      key: `questions-${idx}`,
+      element: (
+        <section ref={el => { sectionRefs.current[idx] = el; }}>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="h-5 w-1 rounded-full bg-marker-orange" />
+            <h2 className="text-[18px] font-semibold text-foreground">Review Questions</h2>
+          </div>
+          <ol className="space-y-2.5 ml-4">
+            {structured.questions!.map((q, i) => (
+              <li key={i} className="text-[15px] text-secondary-foreground leading-[1.8] flex items-start gap-3">
+                <span className="text-muted-foreground font-medium shrink-0 w-5 text-right">{i + 1}.</span>
+                <span>{q}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ),
+    });
+  }
+
+  // Fallback
+  if (!hasStructured && content) {
+    const idx = sectionCounter++;
+    contentSections.push({
+      key: `fallback-${idx}`,
+      element: (
+        <section ref={el => { sectionRefs.current[idx] = el; }}>
+          <div className="text-[15px] text-secondary-foreground whitespace-pre-wrap leading-[1.8]">
+            {content}
+          </div>
+        </section>
+      ),
+    });
+  }
+
+  // Reset refs array length
+  sectionRefs.current.length = sectionCounter;
+
+  // Helper to render insights for a given section index
+  const renderInsightsForSection = (sectionIdx: number) => {
+    const sectionInsights = insights.filter(ins => insightSectionMap[ins.id] === sectionIdx);
+    if (sectionInsights.length === 0) return null;
+
+    return sectionInsights.map((insight, i) => {
+      const isLatest = insight.id === insights[insights.length - 1]?.id;
+      return (
+        <div
+          key={insight.id}
+          ref={isLatest ? latestInsightRef : undefined}
+          className="group animate-fade-in mt-4"
+        >
+          <div className="rounded-xl border border-border bg-card p-5 shadow-lg relative">
+            <button
+              onClick={() => onRemoveInsight(insight.id)}
+              className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md hover:bg-accent"
+            >
+              <X className="h-3.5 w-3.5 text-muted-foreground" />
+            </button>
+            <div className="flex items-center gap-2 mb-3">
+              <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
+              <span className="text-[12px] font-semibold uppercase tracking-widest text-muted-foreground">{insight.action}</span>
+            </div>
+            {insight.selectedText && (
+              <p className="text-[13px] text-muted-foreground italic border-l-2 border-muted-foreground/30 pl-3 mb-3">
+                "{insight.selectedText.length > 120 ? insight.selectedText.slice(0, 120) + '…' : insight.selectedText}"
+              </p>
+            )}
+            <p className="text-[15px] text-secondary-foreground leading-[1.8]">{insight.answer}</p>
+          </div>
+        </div>
+      );
+    });
+  };
+
+  // Render loading indicator for pending section
+  const renderLoadingForSection = (sectionIdx: number) => {
+    if (!loadingInsight || pendingSectionIndex !== sectionIdx) return null;
+    return (
+      <div className="mt-4 animate-fade-in">
+        <div className="flex items-center gap-3 py-3 px-4 rounded-xl border border-border bg-card">
+          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">Generating AI insight...</span>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="relative w-full max-w-[900px] mx-auto px-8 md:px-12 py-10" ref={containerRef}>
@@ -121,92 +294,24 @@ export const NotesReadyState = ({
 
       {!summary && !structured?.oneLineSummary && <div className="mb-8" />}
 
-      {/* Document sections */}
+      {/* Document sections with inline insights */}
       <div className="space-y-10">
-
-        {/* Key Points */}
-        {structured?.keyPoints && structured.keyPoints.length > 0 && (
-          <section>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="h-5 w-1 rounded-full bg-marker-purple" />
-              <h2 className="text-[18px] font-semibold text-foreground">Key Points</h2>
-            </div>
-            <ul className="space-y-2.5 ml-4">
-              {structured.keyPoints.map((point, i) => (
-                <li key={i} className="text-[15px] text-secondary-foreground leading-[1.8] flex items-start gap-3">
-                  <span className="mt-[11px] h-[5px] w-[5px] rounded-full bg-muted-foreground/40 shrink-0" />
-                  <span>{point}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        {/* Sections */}
-        {structured?.sections && structured.sections.length > 0 && (
-          structured.sections.map((section, i) => (
-            <section key={i}>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="h-5 w-1 rounded-full bg-marker-green" />
-                <h2 className="text-[18px] font-semibold text-foreground">{section.heading}</h2>
-              </div>
-              <ul className="space-y-2.5 ml-4">
-                {section.points.map((point, j) => (
-                  <li key={j} className="text-[15px] text-secondary-foreground leading-[1.8] flex items-start gap-3">
-                    <span className="mt-[11px] h-[5px] w-[5px] rounded-full bg-muted-foreground/30 shrink-0" />
-                    <span>{point}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))
-        )}
-
-        {/* Glossary */}
-        {structured?.glossary && structured.glossary.length > 0 && (
-          <section>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="h-5 w-1 rounded-full bg-marker-blue" />
-              <h2 className="text-[18px] font-semibold text-foreground">Glossary</h2>
-            </div>
-            <dl className="space-y-2.5 ml-4">
-              {structured.glossary.map((item, i) => (
-                <div key={i}>
-                  <dt className="text-[15px] font-semibold text-foreground inline">{item.term}</dt>
-                  <dd className="text-[15px] text-secondary-foreground inline"> — {item.meaning}</dd>
-                </div>
-              ))}
-            </dl>
-          </section>
-        )}
-
-        {/* Questions */}
-        {structured?.questions && structured.questions.length > 0 && (
-          <section>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="h-5 w-1 rounded-full bg-marker-orange" />
-              <h2 className="text-[18px] font-semibold text-foreground">Review Questions</h2>
-            </div>
-            <ol className="space-y-2.5 ml-4">
-              {structured.questions.map((q, i) => (
-                <li key={i} className="text-[15px] text-secondary-foreground leading-[1.8] flex items-start gap-3">
-                  <span className="text-muted-foreground font-medium shrink-0 w-5 text-right">{i + 1}.</span>
-                  <span>{q}</span>
-                </li>
-              ))}
-            </ol>
-          </section>
-        )}
-
-        {/* Fallback */}
-        {!hasStructured && content && (
-          <section>
-            <div className="text-[15px] text-secondary-foreground whitespace-pre-wrap leading-[1.8]">
-              {content}
-            </div>
-          </section>
-        )}
+        {contentSections.map((sec, idx) => (
+          <div key={sec.key}>
+            {sec.element}
+            {renderInsightsForSection(idx)}
+            {renderLoadingForSection(idx)}
+          </div>
+        ))}
       </div>
+
+      {/* Loading fallback when no section identified */}
+      {loadingInsight && pendingSectionIndex === null && (
+        <div className="mt-8 flex items-center gap-3 py-3 animate-fade-in">
+          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">Generating AI insight...</span>
+        </div>
+      )}
 
       {/* Floating toolbar */}
       {toolbarPos && (
@@ -239,60 +344,6 @@ export const NotesReadyState = ({
           })}
         </div>
       )}
-
-      {/* Loading insight - positioned at pending anchor */}
-      {loadingInsight && pendingAnchorRef.current !== null && (
-        <div
-          className="absolute left-8 right-8 md:left-12 md:right-12 z-40 animate-fade-in"
-          style={{ top: pendingAnchorRef.current + 8 }}
-        >
-          <div className="flex items-center gap-3 py-3 px-4 rounded-xl border border-border bg-card">
-            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Generating AI insight...</span>
-          </div>
-        </div>
-      )}
-
-      {/* Loading fallback when no anchor */}
-      {loadingInsight && pendingAnchorRef.current === null && (
-        <div className="mt-8 flex items-center gap-3 py-3 animate-fade-in">
-          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">Generating AI insight...</span>
-        </div>
-      )}
-
-      {/* Insights - positioned at their anchor points */}
-      {insights.map((insight) => {
-        const anchorY = insightAnchors[insight.id];
-        const isAnchored = anchorY !== undefined;
-
-        return (
-          <div
-            key={insight.id}
-            className={`relative group animate-fade-in ${isAnchored ? 'absolute left-8 right-8 md:left-12 md:right-12 z-30' : 'mt-6'}`}
-            style={isAnchored ? { top: anchorY + 8 } : undefined}
-          >
-            <div className="rounded-xl border border-border bg-card p-5 shadow-lg">
-              <button
-                onClick={() => onRemoveInsight(insight.id)}
-                className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md hover:bg-accent"
-              >
-                <X className="h-3.5 w-3.5 text-muted-foreground" />
-              </button>
-              <div className="flex items-center gap-2 mb-3">
-                <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
-                <span className="text-[12px] font-semibold uppercase tracking-widest text-muted-foreground">{insight.action}</span>
-              </div>
-              {insight.selectedText && (
-                <p className="text-[13px] text-muted-foreground italic border-l-2 border-muted-foreground/30 pl-3 mb-3">
-                  "{insight.selectedText.length > 120 ? insight.selectedText.slice(0, 120) + '…' : insight.selectedText}"
-                </p>
-              )}
-              <p className="text-[15px] text-secondary-foreground leading-[1.8]">{insight.answer}</p>
-            </div>
-          </div>
-        );
-      })}
     </div>
   );
 };
