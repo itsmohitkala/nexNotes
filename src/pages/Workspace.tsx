@@ -278,6 +278,7 @@ const Workspace = () => {
                 loadingInsight={loadingInsight}
                 onHighlightAction={handleHighlightAction}
                 onRemoveInsight={handleRemoveInsight}
+                onCreateNote={() => setCreateDialogOpen(true)}
               />
             )}
           </div>
