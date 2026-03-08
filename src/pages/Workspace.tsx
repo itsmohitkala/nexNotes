@@ -268,35 +268,34 @@ const Workspace = () => {
       {/* Center + Right */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top navigation bar */}
-        <header className="flex items-center justify-between px-4 h-12 border-b border-border shrink-0">
-          <div className="flex items-center gap-2.5 min-w-0">
+        <header className="flex items-center justify-between px-3 h-11 border-b border-border shrink-0">
+          <div className="flex items-center gap-2 min-w-0">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-accent shrink-0"
+              className="text-muted-foreground hover:text-foreground transition-colors h-7 w-7 flex items-center justify-center rounded-md hover:bg-accent shrink-0"
             >
               {sidebarOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeft className="h-4 w-4" />}
             </button>
-            <div className="w-px h-4 bg-border shrink-0" />
-            <div className="flex items-center gap-1.5 min-w-0 text-[13px]">
-              <span className="text-muted-foreground shrink-0">Notes</span>
+            <div className="w-px h-4 bg-border/60 shrink-0" />
+            <div className="flex items-center gap-1.5 min-w-0 text-[13px] leading-none">
+              <span className="text-muted-foreground/70 shrink-0">Notes</span>
               {note && note.status === 'ready' && (
                 <>
-                  <span className="text-muted-foreground/50 shrink-0">/</span>
+                  <span className="text-muted-foreground/40 shrink-0">/</span>
                   <span className="text-foreground font-medium truncate">{prettifyTitle(note.title)}</span>
                 </>
               )}
             </div>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5">
             {note && note.status === 'ready' && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className="h-7 px-2 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors flex items-center gap-1.5"
+                    className="h-7 w-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors flex items-center justify-center"
                     title="Export note"
                   >
                     <ArrowDownToLine className="h-3.5 w-3.5" />
-                    <span className="hidden sm:inline">Export</span>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -312,11 +311,10 @@ const Workspace = () => {
             {note && note.status === 'ready' && !aiPanelOpen && (
               <button
                 onClick={() => setAiPanelOpen(true)}
-                className="h-7 px-2 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors flex items-center gap-1.5"
+                className="h-7 w-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors flex items-center justify-center"
                 title="Show AI Assistant"
               >
                 <Sparkles className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">AI Assistant</span>
               </button>
             )}
             <ThemeToggle />
