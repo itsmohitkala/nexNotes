@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { BookOpen, Lightbulb, HelpCircle, BookMarked, X, Loader2, Sparkles, Layers } from 'lucide-react';
-import { Json } from '@/integrations/supabase/types';
+import { X, Loader2, Sparkles, Star, Layers, AlignLeft, HelpCircle } from 'lucide-react';
 
 export interface StructuredNote {
   title?: string;
@@ -31,13 +30,6 @@ interface Props {
 
 const INLINE_ACTIONS = ['Explain', 'Simplify', 'Summarise'];
 const ALL_ACTIONS = [...INLINE_ACTIONS, 'Ask question'];
-
-const SectionMarker = ({ color, icon: Icon }: { color: string; icon: React.ElementType }) => (
-  <div className={`flex items-center gap-2 mb-3`}>
-    <div className={`h-1 w-6 rounded-full ${color}`} />
-    <Icon className={`h-4 w-4 ${color.replace('bg-', 'text-').replace('/60', '')}`} />
-  </div>
-);
 
 export const NotesReadyState = ({
   title, content, summary, structured,
@@ -82,36 +74,36 @@ export const NotesReadyState = ({
   );
 
   return (
-    <div className="relative w-full max-w-[900px] mx-auto px-6 md:px-10 py-10" ref={containerRef}>
+    <div className="relative w-full max-w-[900px] mx-auto px-8 md:px-12 py-10" ref={containerRef}>
       {/* Title */}
-      <h1 className="text-[32px] font-bold text-foreground leading-tight tracking-tight mb-2">
+      <h1 className="text-[30px] font-bold text-foreground leading-tight tracking-tight mb-4">
         {structured?.title || title}
       </h1>
 
-      {/* Summary - inline, no card */}
+      {/* Summary */}
       {(summary || structured?.oneLineSummary) && (
-        <p className="text-base text-muted-foreground leading-relaxed mb-10">
+        <p className="text-base text-secondary-foreground leading-[1.8] mb-10">
           {summary || structured?.oneLineSummary}
         </p>
       )}
 
-      {!summary && !structured?.oneLineSummary && <div className="mb-10" />}
+      {!summary && !structured?.oneLineSummary && <div className="mb-8" />}
 
-      {/* Document-style sections */}
-      <div className="space-y-12">
+      {/* Document sections */}
+      <div className="space-y-10">
 
         {/* Key Points */}
         {structured?.keyPoints && structured.keyPoints.length > 0 && (
           <section>
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="h-1.5 w-1.5 rounded-full bg-marker-purple" />
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-5 w-1 rounded-full bg-marker-purple" />
               <h2 className="text-[18px] font-semibold text-foreground">Key Points</h2>
             </div>
-            <ul className="space-y-3 pl-4">
+            <ul className="space-y-2.5 ml-4">
               {structured.keyPoints.map((point, i) => (
-                <li key={i} className="text-base text-secondary-foreground leading-[1.75] flex items-start gap-3">
-                  <span className="mt-[10px] h-1 w-1 rounded-full bg-muted-foreground/40 shrink-0" />
-                  {point}
+                <li key={i} className="text-[15px] text-secondary-foreground leading-[1.8] flex items-start gap-3">
+                  <span className="mt-[11px] h-[5px] w-[5px] rounded-full bg-muted-foreground/40 shrink-0" />
+                  <span>{point}</span>
                 </li>
               ))}
             </ul>
@@ -122,15 +114,15 @@ export const NotesReadyState = ({
         {structured?.sections && structured.sections.length > 0 && (
           structured.sections.map((section, i) => (
             <section key={i}>
-              <div className="flex items-center gap-2.5 mb-4">
-                <div className="h-1.5 w-1.5 rounded-full bg-marker-green" />
+              <div className="flex items-center gap-2 mb-4">
+                <div className="h-5 w-1 rounded-full bg-marker-green" />
                 <h2 className="text-[18px] font-semibold text-foreground">{section.heading}</h2>
               </div>
-              <ul className="space-y-3 pl-4">
+              <ul className="space-y-2.5 ml-4">
                 {section.points.map((point, j) => (
-                  <li key={j} className="text-base text-secondary-foreground leading-[1.75] flex items-start gap-3">
-                    <span className="mt-[10px] h-1 w-1 rounded-full bg-muted-foreground/30 shrink-0" />
-                    {point}
+                  <li key={j} className="text-[15px] text-secondary-foreground leading-[1.8] flex items-start gap-3">
+                    <span className="mt-[11px] h-[5px] w-[5px] rounded-full bg-muted-foreground/30 shrink-0" />
+                    <span>{point}</span>
                   </li>
                 ))}
               </ul>
@@ -141,15 +133,15 @@ export const NotesReadyState = ({
         {/* Glossary */}
         {structured?.glossary && structured.glossary.length > 0 && (
           <section>
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-5 w-1 rounded-full bg-marker-blue" />
               <h2 className="text-[18px] font-semibold text-foreground">Glossary</h2>
             </div>
-            <dl className="space-y-3 pl-4">
+            <dl className="space-y-2.5 ml-4">
               {structured.glossary.map((item, i) => (
                 <div key={i}>
-                  <dt className="text-base font-semibold text-foreground inline">{item.term}</dt>
-                  <dd className="text-base text-secondary-foreground inline"> — {item.meaning}</dd>
+                  <dt className="text-[15px] font-semibold text-foreground inline">{item.term}</dt>
+                  <dd className="text-[15px] text-secondary-foreground inline"> — {item.meaning}</dd>
                 </div>
               ))}
             </dl>
@@ -159,15 +151,15 @@ export const NotesReadyState = ({
         {/* Questions */}
         {structured?.questions && structured.questions.length > 0 && (
           <section>
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="h-1.5 w-1.5 rounded-full bg-marker-orange" />
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-5 w-1 rounded-full bg-marker-orange" />
               <h2 className="text-[18px] font-semibold text-foreground">Review Questions</h2>
             </div>
-            <ol className="space-y-3 pl-4">
+            <ol className="space-y-2.5 ml-4">
               {structured.questions.map((q, i) => (
-                <li key={i} className="text-base text-secondary-foreground leading-[1.75] flex items-start gap-3">
+                <li key={i} className="text-[15px] text-secondary-foreground leading-[1.8] flex items-start gap-3">
                   <span className="text-muted-foreground font-medium shrink-0 w-5 text-right">{i + 1}.</span>
-                  {q}
+                  <span>{q}</span>
                 </li>
               ))}
             </ol>
@@ -177,7 +169,7 @@ export const NotesReadyState = ({
         {/* Fallback: plain content */}
         {!hasStructured && content && (
           <section>
-            <div className="text-base text-secondary-foreground whitespace-pre-wrap leading-[1.75]">
+            <div className="text-[15px] text-secondary-foreground whitespace-pre-wrap leading-[1.8]">
               {content}
             </div>
           </section>
@@ -187,26 +179,36 @@ export const NotesReadyState = ({
       {/* Floating toolbar */}
       {toolbarPos && (
         <div
-          className="absolute z-50 flex items-center gap-0.5 rounded-xl bg-background/95 backdrop-blur-sm border border-border px-1 py-0.5 shadow-lg animate-fade-in"
+          className="absolute z-50 flex items-center gap-0.5 rounded-xl bg-card border border-border px-1.5 py-1 shadow-xl animate-fade-in"
           style={{
             left: toolbarPos.x,
             top: toolbarPos.y,
             transform: 'translate(-50%, -100%)',
           }}
         >
-          {ALL_ACTIONS.map((action) => (
-            <button
-              key={action}
-              className="text-[13px] px-3 py-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors font-medium"
-              onClick={() => handleAction(action)}
-            >
-              {action}
-            </button>
-          ))}
+          {ALL_ACTIONS.map((action) => {
+            const icons: Record<string, React.ElementType> = {
+              'Explain': Star,
+              'Simplify': Layers,
+              'Summarise': AlignLeft,
+              'Ask question': HelpCircle,
+            };
+            const Icon = icons[action] || Star;
+            return (
+              <button
+                key={action}
+                className="text-[13px] px-3 py-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors font-medium flex items-center gap-1.5"
+                onClick={() => handleAction(action)}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                {action === 'Ask question' ? 'Ask AI' : action}
+              </button>
+            );
+          })}
         </div>
       )}
 
-      {/* Loading insight indicator */}
+      {/* Loading insight */}
       {loadingInsight && (
         <div className="mt-8 flex items-center gap-3 py-3 animate-fade-in">
           <Loader2 className="h-4 w-4 animate-spin text-primary" />
@@ -214,7 +216,7 @@ export const NotesReadyState = ({
         </div>
       )}
 
-      {/* AI Insight blocks - minimal style */}
+      {/* Insights */}
       {insights.map((insight) => (
         <div key={insight.id} className="mt-6 relative group animate-fade-in">
           <button
@@ -230,7 +232,7 @@ export const NotesReadyState = ({
           <p className="text-[13px] text-muted-foreground italic border-l-2 border-muted pl-3 mb-2">
             "{insight.selectedText.length > 120 ? insight.selectedText.slice(0, 120) + '…' : insight.selectedText}"
           </p>
-          <p className="text-base text-secondary-foreground leading-[1.75]">{insight.answer}</p>
+          <p className="text-[15px] text-secondary-foreground leading-[1.8]">{insight.answer}</p>
         </div>
       ))}
     </div>
