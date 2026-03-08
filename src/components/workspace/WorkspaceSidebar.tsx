@@ -25,7 +25,7 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
       {/* Logo */}
       <div className="px-4 pt-4 pb-3 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <img src="/logo.png" alt="NexNotes" className="h-6 w-6 rounded-md dark:invert" />
+          <img src="/logo.png" alt="NexNotes" className="h-6 w-6 rounded-md" />
           <span className="text-[15px] font-semibold text-foreground tracking-tight">NexNotes</span>
         </Link>
       </div>

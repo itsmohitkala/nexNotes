@@ -45,7 +45,7 @@ const Signup = () => {
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center space-y-2">
           <Link to="/" className="inline-flex items-center gap-2">
-            <img src="/logo.png" alt="NexNotes" className="h-7 w-7 rounded-lg dark:invert" />
+            <img src="/logo.png" alt="NexNotes" className="h-7 w-7 rounded-lg" />
             <span className="text-xl font-bold text-foreground">NexNotes</span>
           </Link>
           <p className="text-muted-foreground text-sm">Create your account</p>
