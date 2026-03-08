@@ -140,10 +140,10 @@ const Landing = () => {
         <div className="w-full max-w-xl space-y-8">
           <div className="text-center space-y-3">
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground leading-tight">
-              Your cognitive workspace
+              Your AI-powered knowledge workspace
             </h1>
             <p className="text-muted-foreground text-[15px] max-w-md mx-auto leading-relaxed">
-              Paste a link, drop a file, or type text — NexNotes transforms it into structured, AI-powered notes.
+              Drop a file, paste a link, or type text — NexNotes instantly turns it into organized notes you can read, explore, and learn from.
             </p>
           </div>
 
