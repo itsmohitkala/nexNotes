@@ -104,7 +104,7 @@ export const NotesReadyState = ({
         {structured?.keyPoints && structured.keyPoints.length > 0 && (
           <section>
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="h-1.5 w-1.5 rounded-full bg-purple-400" />
+              <div className="h-1.5 w-1.5 rounded-full bg-marker-purple" />
               <h2 className="text-[18px] font-semibold text-foreground">Key Points</h2>
             </div>
             <ul className="space-y-3 pl-4">
