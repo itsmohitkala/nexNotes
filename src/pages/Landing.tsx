@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { FileText, MessageSquare, Zap, GraduationCap, BookOpen, Briefcase, ArrowRight, Highlighter, Brain } from 'lucide-react';
+import { FileText, MessageSquare, Zap, GraduationCap, BookOpen, Briefcase, ArrowRight, Highlighter, Brain, Github } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const fadeUp = {
@@ -46,6 +46,15 @@ const Landing = () => {
             <a href="#use-cases" className="hover:text-foreground transition-colors">Use Cases</a>
           </nav>
           <div className="flex items-center gap-2">
+            <a
+              href="https://github.com/itsmohitkala"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="h-8 w-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+              title="GitHub"
+            >
+              <Github className="h-4 w-4" />
+            </a>
             <ThemeToggle />
             {user ? (
               <>
@@ -335,7 +344,18 @@ const Landing = () => {
             <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
             <a href="#" className="hover:text-foreground transition-colors">Contact</a>
           </div>
-          <span className="text-[12px] text-muted-foreground">© {new Date().getFullYear()} NexNotes</span>
+          <div className="flex items-center gap-4">
+            <a
+              href="https://github.com/itsmohitkala"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              title="GitHub"
+            >
+              <Github className="h-4 w-4" />
+            </a>
+            <span className="text-[12px] text-muted-foreground">© {new Date().getFullYear()} NexNotes</span>
+          </div>
         </div>
       </footer>
     </div>
