@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Plus, Search, FileText, Menu, LayoutGrid, Settings, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
 
 interface Props {
   notes: NoteData[];
@@ -14,7 +13,6 @@ interface Props {
 
 export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNote }: Props) => {
   const [search, setSearch] = useState('');
-  const navigate = useNavigate();
 
   const filtered = notes.filter((n) =>
     n.title.toLowerCase().includes(search.toLowerCase())
@@ -24,7 +22,7 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
     <aside className="w-[240px] border-r border-border bg-card flex flex-col shrink-0 h-full">
       {/* Logo */}
       <div className="px-4 pt-4 pb-3 flex items-center justify-between">
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+        <div className="flex items-center gap-2">
           <div className="h-6 w-6 rounded-md bg-accent flex items-center justify-center">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-foreground">
               <path d="m9 18 6-6-6-6"/>
