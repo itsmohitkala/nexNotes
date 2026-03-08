@@ -356,9 +356,9 @@ export const NotesReadyState = ({
             const Icon = icons[action] || Star;
             return (
               <React.Fragment key={action}>
-                {i > 0 && <div className="w-px h-5 bg-border/50 shrink-0" />}
+                {i > 0 && <div className="w-px h-6 bg-border/50 shrink-0" />}
                 <button
-                  className="text-[12px] px-3.5 py-2 rounded-xl hover:bg-accent/80 text-muted-foreground hover:text-foreground transition-all duration-150 font-medium flex items-center gap-1.5 active:scale-95"
+                  className="text-[13px] px-4 py-2.5 rounded-xl hover:bg-accent/80 text-muted-foreground hover:text-foreground transition-all duration-150 font-medium flex items-center gap-2 active:scale-95"
                   onClick={() => handleAction(action)}
                 >
                   <Icon className="h-3.5 w-3.5" />
