@@ -1,7 +1,11 @@
 import { FileText, Plus, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export const EmptyState = () => {
+interface EmptyStateProps {
+  onCreateNote?: () => void;
+}
+
+export const EmptyState = ({ onCreateNote }: EmptyStateProps) => {
   return (
     <div className="flex-1 flex items-center justify-center p-12">
       <div className="flex flex-col items-center gap-10 max-w-md text-center animate-fade-in">
@@ -30,6 +34,7 @@ export const EmptyState = () => {
           <Button
             size="default"
             className="gap-2 rounded-xl px-6 h-11 bg-foreground text-background hover:bg-foreground/90 font-medium text-sm shadow-sm"
+            onClick={onCreateNote}
           >
             <Plus className="h-4 w-4" /> New Note
           </Button>
@@ -37,6 +42,7 @@ export const EmptyState = () => {
             variant="outline"
             size="default"
             className="gap-2 rounded-xl px-6 h-11 border-border text-muted-foreground hover:text-foreground hover:bg-muted/40 font-medium text-sm"
+            onClick={onCreateNote}
           >
             <Upload className="h-4 w-4" /> Upload
           </Button>

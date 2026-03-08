@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { WorkspaceSidebar } from '@/components/workspace/WorkspaceSidebar';
 import { NotesPanel, NoteDisplay } from '@/components/workspace/NotesPanel';
 import { AiAssistant } from '@/components/workspace/AiAssistant';
+import { CreateNoteDialog } from '@/components/workspace/CreateNoteDialog';
 import { NoteInsight } from '@/components/workspace/NotesReadyState';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { User } from 'lucide-react';
@@ -31,6 +32,7 @@ const Workspace = () => {
   const [insights, setInsights] = useState<NoteInsight[]>([]);
   const [loadingInsight, setLoadingInsight] = useState(false);
   const [pendingQuestion, setPendingQuestion] = useState<{ question: string; selectedText: string } | null>(null);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
@@ -226,7 +228,7 @@ const Workspace = () => {
           notes={sidebarNotes}
           activeNoteId={activeNoteId}
           onSelectNote={handleSelectNote}
-          onCreateNote={() => navigate('/')}
+          onCreateNote={() => setCreateDialogOpen(true)}
         />
       )}
 
@@ -276,6 +278,7 @@ const Workspace = () => {
                 loadingInsight={loadingInsight}
                 onHighlightAction={handleHighlightAction}
                 onRemoveInsight={handleRemoveInsight}
+                onCreateNote={() => setCreateDialogOpen(true)}
               />
             )}
           </div>
@@ -290,6 +293,23 @@ const Workspace = () => {
           )}
         </div>
       </div>
+      <CreateNoteDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        onNoteCreated={(newNote) => {
+          // Refresh sidebar notes
+          if (user) {
+            supabase
+              .from('notes')
+              .select('id, title, content, created_at')
+              .eq('user_id', user.id)
+              .order('created_at', { ascending: false })
+              .then(({ data }) => {
+                if (data) setSidebarNotes(data.map(n => ({ ...n, content: n.content || '', created_at: n.created_at || '' })));
+              });
+          }
+        }}
+      />
     </div>
   );
 };
