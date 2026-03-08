@@ -1,7 +1,11 @@
 import { FileText, Plus, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export const EmptyState = () => {
+interface EmptyStateProps {
+  onCreateNote?: () => void;
+}
+
+export const EmptyState = ({ onCreateNote }: EmptyStateProps) => {
   return (
     <div className="flex-1 flex items-center justify-center p-12">
       <div className="flex flex-col items-center gap-10 max-w-md text-center animate-fade-in">
