@@ -4,7 +4,7 @@ import { NotesPanel, NoteDisplay } from '@/components/workspace/NotesPanel';
 import { AiAssistant } from '@/components/workspace/AiAssistant';
 import { NoteInsight } from '@/components/workspace/NotesReadyState';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { User, Sparkles, PanelLeftClose, PanelLeft, NotebookText, Download } from 'lucide-react';
+import { User, Sparkles, PanelLeftClose, PanelLeft, FileText, ArrowDownToLine } from 'lucide-react';
 import { downloadMarkdown, downloadPdf } from '@/lib/export-note';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
