@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { prettifyTitle } from '@/lib/format-title';
 import { WorkspaceSidebar } from '@/components/workspace/WorkspaceSidebar';
 import { NotesPanel, NoteDisplay } from '@/components/workspace/NotesPanel';
 import { AiAssistant } from '@/components/workspace/AiAssistant';
