@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Plus, Search, FileText, Menu, LayoutGrid, Settings, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
+import { Link } from 'react-router-dom';
 
 interface Props {
   notes: NoteData[];
@@ -22,14 +23,14 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
     <aside className="w-[240px] border-r border-border bg-card flex flex-col shrink-0 h-full">
       {/* Logo */}
       <div className="px-4 pt-4 pb-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <div className="h-6 w-6 rounded-md bg-accent flex items-center justify-center">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-foreground">
               <path d="m9 18 6-6-6-6"/>
             </svg>
           </div>
           <span className="text-[15px] font-semibold text-foreground tracking-tight">NexNotes</span>
-        </div>
+        </Link>
       </div>
 
       {/* Create + Search */}
