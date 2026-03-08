@@ -344,7 +344,18 @@ const Landing = () => {
             <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
             <a href="#" className="hover:text-foreground transition-colors">Contact</a>
           </div>
-          <span className="text-[12px] text-muted-foreground">© {new Date().getFullYear()} NexNotes</span>
+          <div className="flex items-center gap-4">
+            <a
+              href="https://github.com/itsmohitkala"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              title="GitHub"
+            >
+              <Github className="h-4 w-4" />
+            </a>
+            <span className="text-[12px] text-muted-foreground">© {new Date().getFullYear()} NexNotes</span>
+          </div>
         </div>
       </footer>
     </div>
