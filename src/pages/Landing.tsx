@@ -168,14 +168,14 @@ const Landing = () => {
                 key={item.step}
                 initial="hidden" whileInView="visible" viewport={{ once: true }}
                 variants={fadeUp} custom={i}
-                className="rounded-2xl border border-border bg-card p-7 text-center space-y-4 flex flex-col items-center"
+                className="rounded-2xl border border-border bg-card p-7 text-center flex flex-col items-center"
               >
                 <div className="h-10 w-10 rounded-full bg-brand text-brand-foreground text-sm font-bold flex items-center justify-center">
                   {item.step}
                 </div>
-                <h3 className="text-[15px] font-semibold text-foreground">{item.title}</h3>
-                <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[220px]">{item.desc}</p>
-                <div className="w-full pt-2">
+                <h3 className="text-[15px] font-semibold text-foreground mt-4">{item.title}</h3>
+                <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[220px] mt-2 min-h-[40px]">{item.desc}</p>
+                <div className="w-full mt-auto pt-5">
                   <div className="rounded-xl bg-accent/50 border border-border flex items-center justify-center h-24">
                     <item.icon className="h-9 w-9 text-brand/50" />
                   </div>
