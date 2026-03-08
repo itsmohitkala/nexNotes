@@ -354,7 +354,7 @@ const Landing = () => {
             >
               <Github className="h-4 w-4" />
             </a>
-            <span className="text-[12px] text-muted-foreground">© {new Date().getFullYear()} NexNotes</span>
+            <span className="text-[12px] text-muted-foreground">© {new Date().getFullYear()} NexNotes · Founded by <span className="text-foreground font-medium">Mohit Kala</span></span>
           </div>
         </div>
       </footer>
