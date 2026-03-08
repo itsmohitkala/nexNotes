@@ -149,7 +149,7 @@ export const NotesReadyState = ({
               {structured.glossary.map((item, i) => (
                 <div key={i}>
                   <dt className="text-base font-semibold text-foreground inline">{item.term}</dt>
-                  <dd className="text-base text-muted-foreground inline"> — {item.meaning}</dd>
+                  <dd className="text-base text-secondary-foreground inline"> — {item.meaning}</dd>
                 </div>
               ))}
             </dl>
