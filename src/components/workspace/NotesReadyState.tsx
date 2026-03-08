@@ -38,6 +38,7 @@ export const NotesReadyState = ({
   const [selectedText, setSelectedText] = useState('');
   const [toolbarPos, setToolbarPos] = useState<{ x: number; y: number } | null>(null);
   const [insightAnchors, setInsightAnchors] = useState<Record<string, number>>({});
+  const [selectionAnchorY, setSelectionAnchorY] = useState<number | null>(null);
   const pendingAnchorRef = useRef<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -47,14 +48,18 @@ export const NotesReadyState = ({
       if (sel && sel.toString().trim().length > 0 && containerRef.current?.contains(sel.anchorNode)) {
         const range = sel.getRangeAt(0);
         const rect = range.getBoundingClientRect();
-        const containerRect = containerRef.current!.getBoundingClientRect();
+        const containerRect = containerRef.current.getBoundingClientRect();
+        const anchorY = rect.bottom - containerRect.top + containerRef.current.scrollTop;
+
         setSelectedText(sel.toString());
+        setSelectionAnchorY(anchorY);
         setToolbarPos({
           x: rect.left - containerRect.left + rect.width / 2,
           y: rect.top - containerRect.top - 10,
         });
       } else {
         setToolbarPos(null);
+        setSelectionAnchorY(null);
       }
     };
 
@@ -66,22 +71,28 @@ export const NotesReadyState = ({
   useEffect(() => {
     if (insights.length > 0 && pendingAnchorRef.current !== null) {
       const latest = insights[insights.length - 1];
-      if (!insightAnchors[latest.id]) {
+      if (insightAnchors[latest.id] === undefined) {
         setInsightAnchors(prev => ({ ...prev, [latest.id]: pendingAnchorRef.current! }));
         pendingAnchorRef.current = null;
       }
     }
-  }, [insights]);
+  }, [insights, insightAnchors]);
 
   const handleAction = (action: string) => {
-    // Capture the bottom Y of the selection relative to the container
-    const sel = window.getSelection();
-    if (sel && sel.rangeCount > 0 && containerRef.current) {
-      const range = sel.getRangeAt(0);
-      const rect = range.getBoundingClientRect();
-      const containerRect = containerRef.current.getBoundingClientRect();
-      pendingAnchorRef.current = rect.bottom - containerRect.top + containerRef.current.scrollTop;
+    // Use stored selection anchor so click events don't lose position
+    pendingAnchorRef.current = selectionAnchorY;
+
+    // Fallback if selection anchor wasn't captured
+    if (pendingAnchorRef.current === null) {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0 && containerRef.current) {
+        const range = sel.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        const containerRect = containerRef.current.getBoundingClientRect();
+        pendingAnchorRef.current = rect.bottom - containerRect.top + containerRef.current.scrollTop;
+      }
     }
+
     onHighlightAction(action, selectedText);
     setToolbarPos(null);
     window.getSelection()?.removeAllRanges();
