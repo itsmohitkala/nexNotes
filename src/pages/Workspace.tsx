@@ -128,6 +128,20 @@ const Workspace = () => {
     };
     loadNote();
 
+    // 2-minute timeout for processing notes
+    const timeoutId = setTimeout(() => {
+      setNote(prev => {
+        if (prev && prev.id === activeNoteId && prev.status === 'processing') {
+          return {
+            ...prev,
+            status: 'failed',
+            error_message: 'Note processing timed out. The server took too long to respond. Please try again.',
+          };
+        }
+        return prev;
+      });
+    }, 2 * 60 * 1000);
+
     const channel = supabase
       .channel(`note-${activeNoteId}`)
       .on(
@@ -139,6 +153,7 @@ const Workspace = () => {
           filter: `id=eq.${activeNoteId}`,
         },
         async (payload) => {
+          clearTimeout(timeoutId);
           const row = payload.new as any;
           const status = (row.status || 'processing') as NoteDisplay['status'];
 
@@ -178,6 +193,7 @@ const Workspace = () => {
       .subscribe();
 
     return () => {
+      clearTimeout(timeoutId);
       supabase.removeChannel(channel);
     };
   }, [activeNoteId, fetchNote]);
