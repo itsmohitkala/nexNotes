@@ -10,6 +10,7 @@ import Workspace from "./pages/Workspace";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
+import Settings from "./pages/Settings";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
