@@ -23,7 +23,7 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
   return (
     <aside className="w-[240px] border-r border-border bg-card flex flex-col shrink-0 h-full">
       {/* Logo */}
-      <div className="px-4 pt-4 pb-3 flex items-center justify-between">
+      <div className="px-4 pt-5 pb-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <img src="/logo.png" alt="NexNotes" className="h-6 w-6 rounded-md" />
           <span className="text-[15px] font-semibold text-foreground tracking-tight">NexNotes</span>
@@ -31,7 +31,7 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
       </div>
 
       {/* Create + Search */}
-      <div className="px-3 space-y-2 pb-3">
+      <div className="px-3 space-y-2 pb-4">
         <Button
           size="sm"
           className="w-full justify-start gap-2 h-9 text-[13px] bg-accent hover:bg-accent/80 text-foreground border border-border"
@@ -51,38 +51,45 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
         </div>
       </div>
 
-      {/* Notes list */}
-      <div className="flex-1 overflow-auto px-2 py-1">
-        {filtered.map((note) => {
-          const isActive = note.id === activeNoteId;
-          const timeAgo = note.created_at
-            ? formatDistanceToNow(new Date(note.created_at), { addSuffix: true })
-            : '';
+      {/* Your Notes label + list */}
+      <div className="flex-1 overflow-auto flex flex-col min-h-0">
+        <div className="px-4 pt-2 pb-2">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+            Your Notes
+          </span>
+        </div>
+        <div className="flex-1 overflow-auto px-2 pb-2">
+          {filtered.map((note) => {
+            const isActive = note.id === activeNoteId;
+            const timeAgo = note.created_at
+              ? formatDistanceToNow(new Date(note.created_at), { addSuffix: true })
+              : '';
 
-          return (
-            <button
-              key={note.id}
-              onClick={() => onSelectNote(note.id)}
-              className={`w-full text-left px-3 py-2.5 rounded-lg text-[13px] transition-all mb-0.5 flex items-start gap-2.5 ${
-                isActive
-                  ? 'bg-accent text-foreground'
-                  : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
-              }`}
-            >
-              <FileText className="h-3.5 w-3.5 shrink-0 mt-0.5 text-muted-foreground/70" />
-              <div className="min-w-0 flex-1">
-                <span className="block truncate font-medium">{prettifyTitle(note.title)}</span>
-                {timeAgo && (
-                  <span className="block text-[11px] text-muted-foreground/60 mt-0.5">{timeAgo}</span>
-                )}
-              </div>
-            </button>
-          );
-        })}
+            return (
+              <button
+                key={note.id}
+                onClick={() => onSelectNote(note.id)}
+                className={`w-full text-left px-3 py-2.5 rounded-lg text-[13px] transition-all mb-0.5 flex items-start gap-2.5 ${
+                  isActive
+                    ? 'bg-accent text-foreground'
+                    : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
+                }`}
+              >
+                <FileText className="h-3.5 w-3.5 shrink-0 mt-0.5 text-muted-foreground/70" />
+                <div className="min-w-0 flex-1">
+                  <span className="block truncate font-medium">{prettifyTitle(note.title)}</span>
+                  {timeAgo && (
+                    <span className="block text-[11px] text-muted-foreground/60 mt-0.5">{timeAgo}</span>
+                  )}
+                </div>
+              </button>
+            );
+          })}
 
-        {filtered.length === 0 && (
-          <p className="text-[13px] text-muted-foreground text-center py-8">No notes</p>
-        )}
+          {filtered.length === 0 && (
+            <p className="text-[13px] text-muted-foreground text-center py-8">No notes yet</p>
+          )}
+        </div>
       </div>
 
       {/* Bottom */}
