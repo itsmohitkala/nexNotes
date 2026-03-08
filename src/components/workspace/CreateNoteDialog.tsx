@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Link2, Type, Upload } from 'lucide-react';
+import { Link2, ClipboardPaste, UploadCloud } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -96,7 +96,7 @@ export const CreateNoteDialog = ({ open, onOpenChange, onNoteCreated }: Props) =
 
           {/* Text Input */}
           <div className="flex items-start gap-3 rounded-lg bg-secondary px-4 py-3">
-            <Type className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+            <ClipboardPaste className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
             <textarea
               placeholder="Or type / paste text..."
               value={text}
@@ -116,7 +116,7 @@ export const CreateNoteDialog = ({ open, onOpenChange, onNoteCreated }: Props) =
               dragging ? 'border-accent bg-accent/5' : 'border-border hover:border-muted-foreground/40'
             }`}
           >
-            <Upload className="h-5 w-5 text-muted-foreground" />
+            <UploadCloud className="h-5 w-5 text-muted-foreground" />
             {file ? (
               <p className="text-sm text-foreground">{file.name}</p>
             ) : (

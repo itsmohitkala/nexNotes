@@ -1,6 +1,6 @@
 import { NoteData } from '@/pages/Workspace';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Send, Bot, Loader2, AlertCircle, Copy, Trash2, PanelRightClose } from 'lucide-react';
+import { Send, Sparkles, Loader2, AlertCircle, Copy, Trash2, PanelRightClose } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { askAiQuestion } from '@/lib/n8n-api';
 import { supabase } from '@/integrations/supabase/client';
@@ -150,7 +150,7 @@ export const AiAssistant = ({ note, pendingQuestion, onPendingHandled, onClose }
       <div className="flex-1 overflow-auto px-4 py-4 space-y-4" ref={scrollRef}>
         {messages.length === 0 && !loading && (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
-            <Bot className="h-8 w-8 text-muted-foreground/20 mb-3" />
+            <Sparkles className="h-8 w-8 text-muted-foreground/20 mb-3" />
             <p className="text-[13px] text-muted-foreground">Ask anything about your notes.</p>
           </div>
         )}
