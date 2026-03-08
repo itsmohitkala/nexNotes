@@ -2,8 +2,27 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { FileText, MessageSquare, Zap, GraduationCap, BookOpen, Briefcase, ArrowRight, Highlighter, Brain, Github } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { FileText, MessageSquare, Zap, GraduationCap, BookOpen, Briefcase, ArrowRight, Highlighter, Brain, Github, NotebookPen, Users, BotMessageSquare } from 'lucide-react';
+import { motion, useMotionValue, useTransform, animate, useInView } from 'framer-motion';
+import { useEffect, useRef } from 'react';
+
+function AnimatedCounter({ target, suffix = '+' }: { target: number; suffix?: string }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-50px' });
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (v) => {
+    if (target >= 1000) return `${(v / 1000).toFixed(v >= target ? 0 : 1)}K`;
+    return Math.round(v).toString();
+  });
+
+  useEffect(() => {
+    if (isInView) {
+      animate(count, target, { duration: 2, ease: 'easeOut' });
+    }
+  }, [isInView, count, target]);
+
+  return <motion.span ref={ref}>{rounded}</motion.span>;
+}
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
