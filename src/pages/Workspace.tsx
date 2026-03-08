@@ -2,11 +2,13 @@ import { useState, useEffect, useCallback } from 'react';
 import { WorkspaceSidebar } from '@/components/workspace/WorkspaceSidebar';
 import { NotesPanel, NoteDisplay } from '@/components/workspace/NotesPanel';
 import { AiAssistant } from '@/components/workspace/AiAssistant';
+import { NoteInsight } from '@/components/workspace/NotesReadyState';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Layers, PanelLeftClose, PanelLeft, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { performHighlightAction } from '@/lib/n8n-api';
 
 export interface NoteData {
   id: string;
@@ -25,8 +27,19 @@ const Workspace = () => {
   const [sidebarNotes, setSidebarNotes] = useState<NoteData[]>([]);
   const [activeNoteId, setActiveNoteId] = useState<string | null>(noteIdFromUrl);
 
+  // AI interaction state
+  const [insights, setInsights] = useState<NoteInsight[]>([]);
+  const [loadingInsight, setLoadingInsight] = useState(false);
+  const [pendingQuestion, setPendingQuestion] = useState<{ question: string; selectedText: string } | null>(null);
+
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
+
+  // Reset insights when note changes
+  useEffect(() => {
+    setInsights([]);
+    setPendingQuestion(null);
+  }, [activeNoteId]);
 
   // Fetch a single note by ID, including note_outputs
   const fetchNote = useCallback(async (id: string) => {
@@ -46,7 +59,6 @@ const Workspace = () => {
       error_message: data.error_message,
     };
 
-    // Fetch structured output if ready
     if (noteDisplay.status === 'ready') {
       const { data: output } = await supabase
         .from('note_outputs')
@@ -89,7 +101,6 @@ const Workspace = () => {
       return;
     }
 
-    // Initial fetch
     const loadNote = async () => {
       setLoading(true);
       const fetched = await fetchNote(activeNoteId);
@@ -99,7 +110,6 @@ const Workspace = () => {
     };
     loadNote();
 
-    // Realtime subscription for instant updates
     const channel = supabase
       .channel(`note-${activeNoteId}`)
       .on(
@@ -122,7 +132,6 @@ const Workspace = () => {
             error_message: row.error_message,
           };
 
-          // Fetch structured output when note becomes ready
           if (status === 'ready') {
             const { data: output } = await supabase
               .from('note_outputs')
@@ -152,7 +161,6 @@ const Workspace = () => {
 
   const handleRetry = () => {
     if (activeNoteId) {
-      // Reset and re-poll
       setNote((prev) => prev ? { ...prev, status: 'processing' } : prev);
     }
   };
@@ -166,7 +174,51 @@ const Workspace = () => {
     navigate(`/workspace?noteId=${id}`, { replace: true });
   };
 
-  // Convert for sidebar (legacy shape)
+  // Handle highlight actions (Explain/Simplify/Summarise go to notes panel, Ask Question goes to AI tab)
+  const handleHighlightAction = async (action: string, selectedText: string) => {
+    if (!user || !activeNoteId) return;
+
+    if (action === 'Ask question') {
+      setPendingQuestion({ question: selectedText, selectedText });
+      return;
+    }
+
+    setLoadingInsight(true);
+    try {
+      const res = await performHighlightAction({
+        userId: user.id,
+        noteId: activeNoteId,
+        selectedText,
+        action: action.toLowerCase() as 'explain' | 'simplify' | 'summarise',
+      });
+      setInsights((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          action,
+          selectedText,
+          answer: res.answer,
+        },
+      ]);
+    } catch {
+      setInsights((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          action,
+          selectedText,
+          answer: 'Failed to get AI response. Please try again.',
+        },
+      ]);
+    } finally {
+      setLoadingInsight(false);
+    }
+  };
+
+  const handleRemoveInsight = (id: string) => {
+    setInsights((prev) => prev.filter((i) => i.id !== id));
+  };
+
   const activeNoteForAssistant = note && note.status === 'ready'
     ? { id: note.id, title: note.title, content: note.content, created_at: '' }
     : null;
@@ -215,10 +267,22 @@ const Workspace = () => {
                 <p className="text-sm text-muted-foreground">Loading…</p>
               </div>
             ) : (
-              <NotesPanel note={note} onRetry={handleRetry} onBack={handleBack} />
+              <NotesPanel
+                note={note}
+                onRetry={handleRetry}
+                onBack={handleBack}
+                insights={insights}
+                loadingInsight={loadingInsight}
+                onHighlightAction={handleHighlightAction}
+                onRemoveInsight={handleRemoveInsight}
+              />
             )}
           </div>
-          <AiAssistant note={activeNoteForAssistant} />
+          <AiAssistant
+            note={activeNoteForAssistant}
+            pendingQuestion={pendingQuestion}
+            onPendingHandled={() => setPendingQuestion(null)}
+          />
         </div>
       </div>
     </div>
