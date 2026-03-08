@@ -31,8 +31,16 @@ const Workspace = () => {
   const [sidebarNotes, setSidebarNotes] = useState<NoteData[]>([]);
   const [activeNoteId, setActiveNoteId] = useState<string | null>(noteIdFromUrl);
 
-  const [insightsByNote, setInsightsByNote] = useState<Record<string, NoteInsight[]>>({});
+  const [insightsByNote, setInsightsByNote] = useState<Record<string, NoteInsight[]>>(() => {
+    const saved = localStorage.getItem('noteInsights');
+    return saved ? JSON.parse(saved) : {};
+  });
   const [loadingInsightByNote, setLoadingInsightByNote] = useState<Record<string, boolean>>({});
+
+  // Persist insights to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('noteInsights', JSON.stringify(insightsByNote));
+  }, [insightsByNote]);
   const [pendingQuestion, setPendingQuestion] = useState<{ question: string; selectedText: string } | null>(null);
 
   // Derived per-note state
