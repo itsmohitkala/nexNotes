@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { Link2, Type, Upload, ArrowRight } from 'lucide-react';
 import { useState, useRef, useCallback } from 'react';
 import { toast } from 'sonner';
@@ -118,6 +119,7 @@ const Landing = () => {
           <span className="text-[15px] font-semibold text-foreground tracking-tight">NexNotes</span>
         </Link>
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           {user ? (
             <>
               <Link to="/workspace">
