@@ -52,13 +52,13 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
       </div>
 
       {/* Your Notes label + list */}
-      <div className="flex-1 overflow-auto flex flex-col min-h-0">
-        <div className="px-5 pt-1 pb-3">
+      <div className="overflow-auto flex flex-col min-h-0 flex-1">
+        <div className="px-5 pt-4 pb-3">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60">
             Your Notes
           </span>
         </div>
-        <div className="flex-1 overflow-auto px-2 pb-2">
+        <div className="px-3 pb-2">
           {filtered.map((note) => {
             const isActive = note.id === activeNoteId;
             const timeAgo = note.created_at
