@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { FileText, MessageSquare, Zap, GraduationCap, BookOpen, Briefcase, ArrowRight, Highlighter, Brain, Github, NotebookPen, Users, BotMessageSquare } from 'lucide-react';
 import { motion, useMotionValue, useTransform, animate, useInView } from 'framer-motion';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 function AnimatedCounter({ target, suffix = '+' }: { target: number; suffix?: string }) {
   const ref = useRef(null);
@@ -43,6 +44,13 @@ const SectionHeading = ({ children, subtitle }: { children: React.ReactNode; sub
 const Landing = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const [stats, setStats] = useState({ notes_count: 0, users_count: 0, ai_queries_count: 0 });
+
+  useEffect(() => {
+    supabase.rpc('get_public_stats').then(({ data }) => {
+      if (data) setStats(data as typeof stats);
+    });
+  }, []);
 
   const handleCTA = () => navigate(user ? '/workspace' : '/signup');
 
@@ -283,9 +291,9 @@ const Landing = () => {
           </motion.div>
           <div className="grid grid-cols-3 gap-6">
             {[
-              { icon: NotebookPen, value: 1000, suffix: '+', label: 'Notes Created' },
-              { icon: Users, value: 500, suffix: '+', label: 'Happy Users' },
-              { icon: BotMessageSquare, value: 10000, suffix: '+', label: 'AI Queries' },
+              { icon: NotebookPen, value: stats.notes_count, label: 'Notes Created' },
+              { icon: Users, value: stats.users_count, label: 'Happy Users' },
+              { icon: BotMessageSquare, value: stats.ai_queries_count, label: 'AI Queries' },
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
@@ -297,7 +305,7 @@ const Landing = () => {
                   <stat.icon className="h-5 w-5 text-brand" />
                 </div>
                 <div className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
-                  <AnimatedCounter target={stat.value} suffix={stat.suffix} />{stat.suffix}
+                  <AnimatedCounter target={stat.value} />
                 </div>
                 <p className="text-[13px] text-muted-foreground font-medium">{stat.label}</p>
               </motion.div>
