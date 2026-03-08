@@ -1,10 +1,20 @@
 import { NoteData } from '@/pages/Workspace';
 import { prettifyTitle } from '@/lib/format-title';
 import { Button } from '@/components/ui/button';
-import { Plus, Search, FileText, Settings, RefreshCw } from 'lucide-react';
+import { Plus, Search, FileText, Settings, RefreshCw, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Link } from 'react-router-dom';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface Props {
   notes: NoteData[];
