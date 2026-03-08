@@ -276,6 +276,20 @@ const Workspace = () => {
                 loadingInsight={loadingInsight}
                 onHighlightAction={handleHighlightAction}
                 onRemoveInsight={handleRemoveInsight}
+                onNoteCreated={(noteId) => {
+                  handleSelectNote(noteId);
+                  // Refresh sidebar
+                  if (user) {
+                    supabase
+                      .from('notes')
+                      .select('id, title, content, created_at')
+                      .eq('user_id', user.id)
+                      .order('created_at', { ascending: false })
+                      .then(({ data }) => {
+                        if (data) setSidebarNotes(data.map(n => ({ ...n, content: n.content || '', created_at: n.created_at || '' })));
+                      });
+                  }
+                }}
               />
             )}
           </div>
