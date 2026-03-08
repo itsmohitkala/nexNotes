@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { WorkspaceSidebar } from '@/components/workspace/WorkspaceSidebar';
 import { NotesPanel, NoteDisplay } from '@/components/workspace/NotesPanel';
 import { AiAssistant } from '@/components/workspace/AiAssistant';
+import { CreateNoteDialog } from '@/components/workspace/CreateNoteDialog';
 import { NoteInsight } from '@/components/workspace/NotesReadyState';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { User } from 'lucide-react';
