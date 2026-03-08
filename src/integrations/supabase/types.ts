@@ -149,6 +149,47 @@ export type Database = {
           },
         ]
       }
+      note_chats: {
+        Row: {
+          answer: string
+          created_at: string
+          id: string
+          note_id: string
+          question: string
+          selected_text: string | null
+          source: string
+          user_id: string
+        }
+        Insert: {
+          answer: string
+          created_at?: string
+          id?: string
+          note_id: string
+          question: string
+          selected_text?: string | null
+          source?: string
+          user_id: string
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          id?: string
+          note_id?: string
+          question?: string
+          selected_text?: string | null
+          source?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "note_chats_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: false
+            referencedRelation: "notes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       note_outputs: {
         Row: {
           created_at: string
