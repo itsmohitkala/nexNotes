@@ -37,12 +37,20 @@ async function pollForAnswer(chatId: string, maxAttempts = 30, interval = 2000):
 
 export const AiAssistant = ({ note, pendingQuestion, onPendingHandled, onClose }: Props) => {
   const [input, setInput] = useState('');
-  // Per-note message store
-  const [messagesByNote, setMessagesByNote] = useState<Record<string, Message[]>>({});
+  // Per-note message store - load from localStorage
+  const [messagesByNote, setMessagesByNote] = useState<Record<string, Message[]>>(() => {
+    const saved = localStorage.getItem('aiChatMessages');
+    return saved ? JSON.parse(saved) : {};
+  });
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const sendingRef = useRef(false);
   const { user } = useAuth();
+
+  // Persist messages to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('aiChatMessages', JSON.stringify(messagesByNote));
+  }, [messagesByNote]);
 
   const noteId = note?.id ?? '';
   const messages = messagesByNote[noteId] ?? [];
