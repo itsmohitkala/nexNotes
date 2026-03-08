@@ -25,7 +25,7 @@ interface Props {
   structured?: StructuredNote | null;
   insights: NoteInsight[];
   loadingInsight: boolean;
-  onHighlightAction: (action: string, selectedText: string) => void;
+  onHighlightAction: (action: string, selectedText: string, sectionIndex?: number) => void;
   onRemoveInsight: (id: string) => void;
 }
 
