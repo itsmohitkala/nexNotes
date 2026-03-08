@@ -30,6 +30,11 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
         </Link>
       </div>
 
+      {/* Divider */}
+      <div className="px-4 pb-3">
+        <div className="h-px bg-border/50" />
+      </div>
+
       {/* Create + Search */}
       <div className="px-4 space-y-3 pb-4">
         <Button
