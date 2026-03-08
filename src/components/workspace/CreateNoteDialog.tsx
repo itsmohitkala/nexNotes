@@ -41,7 +41,7 @@ export const CreateNoteDialog = ({ open, onOpenChange, onNoteCreated }: Props) =
 
     setProcessing(true);
     try {
-      const webhookUrl = 'https://n8n.srv1006534.hstgr.cloud/webhook-test/f29d58c6-3923-4ddb-9426-85667b7d8266';
+      const webhookUrl = 'https://n8n.srv1006534.hstgr.cloud/webhook/f29d58c6-3923-4ddb-9426-85667b7d8266';
 
       const formData = new FormData();
       if (url) formData.append('url', url);
