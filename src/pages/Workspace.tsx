@@ -179,7 +179,10 @@ const Workspace = () => {
     if (!user || !activeNoteId) return;
 
     if (action === 'Ask question') {
-      setPendingQuestion({ question: 'Can you explain this highlighted text?', selectedText });
+      // Always use a default prompt for highlight-to-AI-tab, selectedText carries the actual highlight
+      const defaultAskPrompt = 'Can you explain this highlighted text?';
+      console.log('[Workspace] Ask Question triggered. question:', defaultAskPrompt, '| selectedText:', selectedText);
+      setPendingQuestion({ question: defaultAskPrompt, selectedText });
       return;
     }
 
