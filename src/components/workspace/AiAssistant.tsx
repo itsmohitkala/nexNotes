@@ -113,8 +113,17 @@ export const AiAssistant = ({ note, pendingQuestion, onPendingHandled }: Props) 
   return (
     <div className="w-[320px] border-l border-border bg-background flex flex-col shrink-0 h-full">
       {/* Header */}
-      <div className="px-5 py-4 border-b border-border">
+      <div className="px-5 py-4 border-b border-border flex items-center justify-between">
         <h2 className="text-[15px] font-semibold text-foreground">AI Assistant</h2>
+        {messages.length > 0 && (
+          <button
+            onClick={() => setMessages([])}
+            className="text-muted-foreground hover:text-destructive transition-colors p-1 rounded-md hover:bg-accent"
+            title="Clear chat"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        )}
       </div>
 
       {/* Messages */}

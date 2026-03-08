@@ -315,7 +315,7 @@ const Workspace = () => {
           </div>
 
           {/* Right AI Panel */}
-          {note && note.status === 'ready' && (
+          {note && note.status === 'ready' && aiPanelOpen && (
             <AiAssistant
               note={activeNoteForAssistant}
               pendingQuestion={pendingQuestion}
