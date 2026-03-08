@@ -4,7 +4,7 @@ import { NotesPanel, NoteDisplay } from '@/components/workspace/NotesPanel';
 import { AiAssistant } from '@/components/workspace/AiAssistant';
 import { NoteInsight } from '@/components/workspace/NotesReadyState';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { User, Sparkles, PanelLeftClose, PanelLeft, FileText, ArrowDownToLine } from 'lucide-react';
+import { User, Sparkles, PanelLeftClose, PanelLeft, ArrowDownToLine } from 'lucide-react';
 import { downloadMarkdown, downloadPdf } from '@/lib/export-note';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
@@ -275,10 +275,11 @@ const Workspace = () => {
             >
               {sidebarOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeft className="h-4 w-4" />}
             </button>
-            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <FileText className="h-4 w-4 text-muted-foreground" />
-              <span className="text-foreground font-medium">Notes</span>
-            </div>
+            {note && note.status === 'ready' && (
+              <span className="text-sm text-foreground font-medium truncate max-w-[300px]">
+                {note.title}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-1">
             {note && note.status === 'ready' && (
