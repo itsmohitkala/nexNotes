@@ -291,9 +291,9 @@ const Landing = () => {
           </motion.div>
           <div className="grid grid-cols-3 gap-6">
             {[
-              { icon: NotebookPen, value: 1000, suffix: '+', label: 'Notes Created' },
-              { icon: Users, value: 500, suffix: '+', label: 'Happy Users' },
-              { icon: BotMessageSquare, value: 10000, suffix: '+', label: 'AI Queries' },
+              { icon: NotebookPen, value: stats.notes_count, label: 'Notes Created' },
+              { icon: Users, value: stats.users_count, label: 'Happy Users' },
+              { icon: BotMessageSquare, value: stats.ai_queries_count, label: 'AI Queries' },
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
