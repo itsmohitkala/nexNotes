@@ -62,7 +62,26 @@ export const NotesReadyState = ({
     return () => document.removeEventListener('mouseup', handleSelection);
   }, []);
 
+  // Track anchor for incoming insight
+  useEffect(() => {
+    if (insights.length > 0 && pendingAnchorRef.current !== null) {
+      const latest = insights[insights.length - 1];
+      if (!insightAnchors[latest.id]) {
+        setInsightAnchors(prev => ({ ...prev, [latest.id]: pendingAnchorRef.current! }));
+        pendingAnchorRef.current = null;
+      }
+    }
+  }, [insights]);
+
   const handleAction = (action: string) => {
+    // Capture the bottom Y of the selection relative to the container
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0 && containerRef.current) {
+      const range = sel.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+      const containerRect = containerRef.current.getBoundingClientRect();
+      pendingAnchorRef.current = rect.bottom - containerRect.top + containerRef.current.scrollTop;
+    }
     onHighlightAction(action, selectedText);
     setToolbarPos(null);
     window.getSelection()?.removeAllRanges();
