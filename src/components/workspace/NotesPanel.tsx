@@ -1,5 +1,5 @@
 import { NotesProcessingState } from './NotesProcessingState';
-import { NotesReadyState, StructuredNote } from './NotesReadyState';
+import { NotesReadyState, StructuredNote, NoteInsight } from './NotesReadyState';
 import { NotesErrorState } from './NotesErrorState';
 
 export interface NoteDisplay {
@@ -16,9 +16,13 @@ interface Props {
   note: NoteDisplay | null;
   onRetry?: () => void;
   onBack?: () => void;
+  insights: NoteInsight[];
+  loadingInsight: boolean;
+  onHighlightAction: (action: string, selectedText: string) => void;
+  onRemoveInsight: (id: string) => void;
 }
 
-export const NotesPanel = ({ note, onRetry, onBack }: Props) => {
+export const NotesPanel = ({ note, onRetry, onBack, insights, loadingInsight, onHighlightAction, onRemoveInsight }: Props) => {
   if (!note) {
     return (
       <div className="flex-1 flex items-center justify-center text-muted-foreground">
@@ -47,6 +51,10 @@ export const NotesPanel = ({ note, onRetry, onBack }: Props) => {
       content={note.content || ''}
       summary={note.summary}
       structured={note.structured}
+      insights={insights}
+      loadingInsight={loadingInsight}
+      onHighlightAction={onHighlightAction}
+      onRemoveInsight={onRemoveInsight}
     />
   );
 };

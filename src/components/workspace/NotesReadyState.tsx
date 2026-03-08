@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { BookOpen, Lightbulb, HelpCircle, BookMarked } from 'lucide-react';
+import { BookOpen, Lightbulb, HelpCircle, BookMarked, X, Loader2, Sparkles } from 'lucide-react';
 import { Json } from '@/integrations/supabase/types';
 
 export interface StructuredNote {
@@ -11,16 +11,31 @@ export interface StructuredNote {
   questions?: string[];
 }
 
+export interface NoteInsight {
+  id: string;
+  action: string;
+  selectedText: string;
+  answer: string;
+}
+
 interface Props {
   title: string;
   content: string;
   summary?: string | null;
   structured?: StructuredNote | null;
+  insights: NoteInsight[];
+  loadingInsight: boolean;
+  onHighlightAction: (action: string, selectedText: string) => void;
+  onRemoveInsight: (id: string) => void;
 }
 
-const AI_ACTIONS = ['Explain', 'Simplify', 'Summarise', 'Ask question'];
+const INLINE_ACTIONS = ['Explain', 'Simplify', 'Summarise'];
+const ALL_ACTIONS = [...INLINE_ACTIONS, 'Ask question'];
 
-export const NotesReadyState = ({ title, content, summary, structured }: Props) => {
+export const NotesReadyState = ({
+  title, content, summary, structured,
+  insights, loadingInsight, onHighlightAction, onRemoveInsight,
+}: Props) => {
   const [selectedText, setSelectedText] = useState('');
   const [toolbarPos, setToolbarPos] = useState<{ x: number; y: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -45,6 +60,12 @@ export const NotesReadyState = ({ title, content, summary, structured }: Props) 
     document.addEventListener('mouseup', handleSelection);
     return () => document.removeEventListener('mouseup', handleSelection);
   }, []);
+
+  const handleAction = (action: string) => {
+    onHighlightAction(action, selectedText);
+    setToolbarPos(null);
+    window.getSelection()?.removeAllRanges();
+  };
 
   const hasStructured = structured && (
     structured.sections?.length ||
@@ -150,7 +171,7 @@ export const NotesReadyState = ({ title, content, summary, structured }: Props) 
           </div>
         )}
 
-        {/* Fallback: plain content if no structured data */}
+        {/* Fallback: plain content */}
         {!hasStructured && content && (
           <div className="text-sm text-secondary-foreground whitespace-pre-wrap leading-relaxed">
             {content}
@@ -167,14 +188,11 @@ export const NotesReadyState = ({ title, content, summary, structured }: Props) 
               transform: 'translate(-50%, -100%)',
             }}
           >
-            {AI_ACTIONS.map((action) => (
+            {ALL_ACTIONS.map((action) => (
               <button
                 key={action}
                 className="text-xs px-2 py-1 rounded hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
-                onClick={() => {
-                  console.log(`AI action: ${action} on "${selectedText}"`);
-                  setToolbarPos(null);
-                }}
+                onClick={() => handleAction(action)}
               >
                 {action}
               </button>
@@ -182,6 +200,34 @@ export const NotesReadyState = ({ title, content, summary, structured }: Props) 
           </div>
         )}
       </div>
+
+      {/* Loading insight indicator */}
+      {loadingInsight && (
+        <div className="mt-4 rounded-lg border border-accent/30 bg-accent/5 p-4 flex items-center gap-3">
+          <Loader2 className="h-4 w-4 animate-spin text-accent" />
+          <span className="text-sm text-muted-foreground">Generating AI insight...</span>
+        </div>
+      )}
+
+      {/* AI Insight blocks */}
+      {insights.map((insight) => (
+        <div key={insight.id} className="mt-4 rounded-lg border border-accent/30 bg-card p-4 space-y-2 relative group">
+          <button
+            onClick={() => onRemoveInsight(insight.id)}
+            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-secondary"
+          >
+            <X className="h-3.5 w-3.5 text-muted-foreground" />
+          </button>
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-3.5 w-3.5 text-accent" />
+            <span className="text-xs font-semibold uppercase tracking-wider text-accent">{insight.action}</span>
+          </div>
+          <p className="text-xs text-muted-foreground italic border-l-2 border-accent/30 pl-3">
+            "{insight.selectedText.length > 120 ? insight.selectedText.slice(0, 120) + '…' : insight.selectedText}"
+          </p>
+          <p className="text-sm text-secondary-foreground leading-relaxed">{insight.answer}</p>
+        </div>
+      ))}
     </div>
   );
 };
