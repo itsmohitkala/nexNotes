@@ -88,6 +88,11 @@
 
     --border: 220 12% 17%;
     --input: 220 12% 17%;
+
+    --brand: 252 56% 62%;
+    --brand-foreground: 0 0% 100%;
+    --brand-light: 252 40% 18%;
+    --brand-dark: 252 56% 72%;
     --ring: 220 10% 40%;
 
     --sidebar-background: 220 14% 9%;
