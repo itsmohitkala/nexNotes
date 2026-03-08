@@ -18,108 +18,67 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
     n.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  const recentNotes = filtered.slice(0, 5);
-  const olderNotes = filtered.slice(5);
-
   return (
-    <aside className="w-[260px] border-r border-border bg-sidebar flex flex-col shrink-0 h-full">
+    <aside className="w-[240px] border-r border-border bg-background flex flex-col shrink-0 h-full">
       {/* Logo */}
-      <div className="px-5 pt-5 pb-3">
-        <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-            <FileText className="h-4 w-4 text-primary" />
-          </div>
-          <span className="font-semibold text-foreground text-body">NexNotes</span>
-        </div>
+      <div className="px-4 pt-4 pb-2">
+        <span className="text-sm font-semibold text-foreground tracking-tight">NexNotes</span>
       </div>
 
       {/* Create + Search */}
-      <div className="px-3 space-y-2 pb-3">
+      <div className="px-3 space-y-1.5 pb-3">
         <Button 
           size="sm" 
-          className="w-full justify-start gap-2 bg-primary text-primary-foreground hover:bg-primary/90 h-9"
+          className="w-full justify-start gap-2 h-8 text-[13px] bg-primary/10 text-primary hover:bg-primary/15 border-0"
+          variant="outline"
           onClick={onCreateNote}
         >
-          <Plus className="h-4 w-4" /> Create Note
+          <Plus className="h-3.5 w-3.5" /> New Note
         </Button>
-        <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-2">
-          <Search className="h-3.5 w-3.5 text-muted-foreground" />
+        <div className="flex items-center gap-2 rounded-lg px-3 py-1.5 bg-muted/40">
+          <Search className="h-3 w-3 text-muted-foreground" />
           <input
-            placeholder="Search notes..."
+            placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
+            className="flex-1 bg-transparent text-[13px] text-foreground placeholder:text-muted-foreground outline-none"
           />
         </div>
       </div>
 
-      <div className="border-t border-border mx-3" />
-
       {/* Notes list */}
-      <div className="flex-1 overflow-auto px-3 py-3 space-y-4">
-        {recentNotes.length > 0 && (
-          <div className="space-y-1">
-            <p className="text-caption text-muted-foreground px-2 pb-1 uppercase tracking-wider font-medium flex items-center gap-1.5">
-              <Clock className="h-3 w-3" /> Recent
-            </p>
-            {recentNotes.map((note) => (
-              <NoteItem 
-                key={note.id} 
-                note={note} 
-                isActive={note.id === activeNoteId}
-                onSelect={onSelectNote}
-              />
-            ))}
-          </div>
-        )}
+      <div className="flex-1 overflow-auto px-2 py-1">
+        <p className="text-[11px] text-muted-foreground px-2 pb-2 uppercase tracking-widest font-medium">
+          Recent
+        </p>
+        {filtered.map((note) => {
+          const isActive = note.id === activeNoteId;
+          const timeAgo = note.created_at 
+            ? formatDistanceToNow(new Date(note.created_at), { addSuffix: true })
+            : '';
 
-        {olderNotes.length > 0 && (
-          <div className="space-y-1">
-            <p className="text-caption text-muted-foreground px-2 pb-1 uppercase tracking-wider font-medium">
-              All Notes
-            </p>
-            {olderNotes.map((note) => (
-              <NoteItem 
-                key={note.id} 
-                note={note} 
-                isActive={note.id === activeNoteId}
-                onSelect={onSelectNote}
-              />
-            ))}
-          </div>
-        )}
+          return (
+            <button
+              key={note.id}
+              onClick={() => onSelectNote(note.id)}
+              className={`w-full text-left px-3 py-2 rounded-lg text-[13px] transition-colors mb-0.5 ${
+                isActive
+                  ? 'bg-muted text-foreground'
+                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+              }`}
+            >
+              <span className="block truncate font-medium">{note.title}</span>
+              {timeAgo && (
+                <span className="block text-[11px] text-muted-foreground/70 mt-0.5">{timeAgo}</span>
+              )}
+            </button>
+          );
+        })}
 
         {filtered.length === 0 && (
-          <p className="text-caption text-muted-foreground text-center py-8">No notes found</p>
+          <p className="text-[13px] text-muted-foreground text-center py-8">No notes</p>
         )}
       </div>
     </aside>
   );
 };
-
-function NoteItem({ note, isActive, onSelect }: { note: NoteData; isActive: boolean; onSelect: (id: string) => void }) {
-  const timeAgo = note.created_at 
-    ? formatDistanceToNow(new Date(note.created_at), { addSuffix: true })
-    : '';
-
-  return (
-    <button
-      onClick={() => onSelect(note.id)}
-      className={`w-full text-left px-3 py-2.5 rounded-md text-sm transition-all duration-150 group ${
-        isActive
-          ? 'bg-primary/10 text-foreground border border-primary/20'
-          : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground border border-transparent'
-      }`}
-    >
-      <div className="flex items-center gap-2.5">
-        <FileText className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`} />
-        <div className="flex-1 min-w-0">
-          <span className="truncate block font-medium">{note.title}</span>
-          {timeAgo && (
-            <span className="text-caption text-muted-foreground truncate block mt-0.5">{timeAgo}</span>
-          )}
-        </div>
-      </div>
-    </button>
-  );
-}
