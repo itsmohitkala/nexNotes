@@ -27,8 +27,8 @@
     --secondary-foreground: 220 9% 82%;
 
     --muted: 220 15% 13%;
-    /* #9ca3af */
-    --muted-foreground: 218 11% 65%;
+    /* readable muted text */
+    --muted-foreground: 218 11% 55%;
 
     /* #3b82f6 → hsl(217 91% 60%) */
     --accent: 217 91% 60%;
