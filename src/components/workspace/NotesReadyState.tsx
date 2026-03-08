@@ -76,8 +76,24 @@ export const NotesReadyState = ({
     };
 
     document.addEventListener('mouseup', handleSelection);
-    return () => document.removeEventListener('mouseup', handleSelection);
-  }, [findSectionIndex]);
+
+    const handleMouseDown = (e: MouseEvent) => {
+      // If clicking outside the toolbar, dismiss it
+      if (toolbarPos) {
+        const toolbar = containerRef.current?.querySelector('[data-toolbar]');
+        if (toolbar && !toolbar.contains(e.target as Node)) {
+          setToolbarPos(null);
+          window.getSelection()?.removeAllRanges();
+        }
+      }
+    };
+    document.addEventListener('mousedown', handleMouseDown);
+
+    return () => {
+      document.removeEventListener('mouseup', handleSelection);
+      document.removeEventListener('mousedown', handleMouseDown);
+    };
+  }, [findSectionIndex, toolbarPos]);
 
   // Map new insights to their section at the time they arrive
   useEffect(() => {
@@ -322,6 +338,7 @@ export const NotesReadyState = ({
       {/* Floating toolbar */}
       {toolbarPos && (
         <div
+          data-toolbar
           className="absolute z-50 flex items-center rounded-2xl bg-card/95 backdrop-blur-md border border-border/60 px-1 py-0.5 shadow-2xl shadow-black/10 animate-scale-in origin-bottom"
           style={{
             left: toolbarPos.x,
