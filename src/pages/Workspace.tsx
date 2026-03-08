@@ -32,6 +32,7 @@ const Workspace = () => {
   const [insights, setInsights] = useState<NoteInsight[]>([]);
   const [loadingInsight, setLoadingInsight] = useState(false);
   const [pendingQuestion, setPendingQuestion] = useState<{ question: string; selectedText: string } | null>(null);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
