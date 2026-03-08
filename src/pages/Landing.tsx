@@ -273,6 +273,39 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* ── Stats Counter ── */}
+      <section className="border-t border-border">
+        <div className="max-w-4xl mx-auto px-6 py-20 md:py-24">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+            <SectionHeading subtitle="Growing every day with users who love smarter notes.">
+              By the Numbers
+            </SectionHeading>
+          </motion.div>
+          <div className="grid grid-cols-3 gap-6">
+            {[
+              { icon: NotebookPen, value: 1000, suffix: '+', label: 'Notes Created' },
+              { icon: Users, value: 500, suffix: '+', label: 'Happy Users' },
+              { icon: BotMessageSquare, value: 10000, suffix: '+', label: 'AI Queries' },
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial="hidden" whileInView="visible" viewport={{ once: true }}
+                variants={fadeUp} custom={i}
+                className="rounded-2xl border border-border bg-card p-8 text-center space-y-3 flex flex-col items-center hover:border-brand/30 transition-colors duration-200"
+              >
+                <div className="h-12 w-12 rounded-xl bg-brand/10 flex items-center justify-center">
+                  <stat.icon className="h-5 w-5 text-brand" />
+                </div>
+                <div className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+                  <AnimatedCounter target={stat.value} suffix={stat.suffix} />{stat.suffix}
+                </div>
+                <p className="text-[13px] text-muted-foreground font-medium">{stat.label}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Before & After ── */}
       <section className="border-t border-border">
         <div className="max-w-5xl mx-auto px-6 py-20 md:py-24">
