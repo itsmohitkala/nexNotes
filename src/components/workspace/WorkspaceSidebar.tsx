@@ -75,7 +75,7 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
             >
               <FileText className="h-4 w-4 shrink-0 mt-0.5 text-muted-foreground" />
               <div className="min-w-0 flex-1">
-                <span className="block truncate font-medium">{note.title}</span>
+                <span className="block truncate font-medium">{prettifyTitle(note.title)}</span>
                 {timeAgo && (
                   <span className="block text-[11px] text-muted-foreground/60 mt-0.5">{timeAgo}</span>
                 )}
