@@ -314,8 +314,9 @@ const Workspace = () => {
             )}
             <ThemeToggle />
             <button
-              onClick={handleSignOut}
+              onClick={() => navigate('/settings')}
               className="h-7 w-7 rounded-full bg-accent flex items-center justify-center hover:bg-accent/80 transition-colors"
+              title="Settings"
             >
               <User className="h-3.5 w-3.5 text-muted-foreground" />
             </button>
