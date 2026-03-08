@@ -37,13 +37,23 @@ async function pollForAnswer(chatId: string, maxAttempts = 30, interval = 2000):
 
 export const AiAssistant = ({ note, pendingQuestion, onPendingHandled, onClose }: Props) => {
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
+  // Per-note message store
+  const [messagesByNote, setMessagesByNote] = useState<Record<string, Message[]>>({});
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const sendingRef = useRef(false);
   const { user } = useAuth();
 
-  // Don't clear messages on note switch — persist chat history
+  const noteId = note?.id ?? '';
+  const messages = messagesByNote[noteId] ?? [];
+
+  const setMessages = useCallback((updater: Message[] | ((prev: Message[]) => Message[])) => {
+    setMessagesByNote(prev => {
+      const current = prev[noteId] ?? [];
+      const next = typeof updater === 'function' ? updater(current) : updater;
+      return { ...prev, [noteId]: next };
+    });
+  }, [noteId]);
 
   const handleSend = useCallback(async (questionOverride?: string, selectedTextOverride?: string | null) => {
     const question = (questionOverride || input).trim();
