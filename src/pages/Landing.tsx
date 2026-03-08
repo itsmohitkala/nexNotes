@@ -141,7 +141,7 @@ const Landing = () => {
                   <div className="w-2.5 h-2.5 rounded-full bg-marker-green/50" />
                   <span className="ml-3 text-[10px] text-muted-foreground font-medium tracking-wide">NexNotes</span>
                 </div>
-                <div className="grid grid-cols-5 min-h-[260px]">
+                <div className="grid grid-cols-5 min-h-[320px]">
                   <div className="col-span-2 border-r border-border p-3.5 space-y-2 bg-accent/20">
                     <div className="text-[10px] font-semibold text-foreground mb-2.5 tracking-wide">Your Notes</div>
                     {['Research Paper', 'Biology Ch.4', 'Meeting Notes'].map((t, i) => (
@@ -150,28 +150,47 @@ const Landing = () => {
                       </div>
                     ))}
                   </div>
-                  <div className="col-span-3 p-3.5 space-y-3">
-                    <div className="text-[10px] font-semibold text-foreground tracking-wide">AI-Generated Notes</div>
-                    <div className="space-y-2.5">
-                      {[
-                        { color: 'bg-marker-blue', textColor: 'text-marker-blue', label: 'Summary', w1: 'w-full', w2: 'w-4/5' },
-                        { color: 'bg-marker-purple', textColor: 'text-marker-purple', label: 'Key Points', w1: 'w-full', w2: 'w-3/5' },
-                        { color: 'bg-marker-green', textColor: 'text-marker-green', label: 'Concepts', w1: 'w-full', w2: 'w-2/3' },
-                      ].map((s) => (
-                        <div key={s.label} className="flex items-start gap-2">
-                          <div className={`w-1 rounded-full ${s.color} self-stretch shrink-0`} />
-                          <div className="space-y-1 flex-1">
-                            <div className={`text-[9px] font-semibold ${s.textColor} uppercase tracking-widest`}>{s.label}</div>
-                            <div className={`h-1.5 ${s.w1} rounded-full bg-muted`} />
-                            <div className={`h-1.5 ${s.w2} rounded-full bg-muted`} />
+                  <div className="col-span-3 flex flex-col">
+                    <div className="p-3.5 space-y-3 flex-1 border-b border-border">
+                      <div className="text-[10px] font-semibold text-foreground tracking-wide">AI-Generated Notes</div>
+                      <div className="space-y-2.5">
+                        {[
+                          { color: 'bg-marker-blue', textColor: 'text-marker-blue', label: 'Summary', w1: 'w-full', w2: 'w-4/5' },
+                          { color: 'bg-marker-purple', textColor: 'text-marker-purple', label: 'Key Points', w1: 'w-full', w2: 'w-3/5' },
+                          { color: 'bg-marker-green', textColor: 'text-marker-green', label: 'Concepts', w1: 'w-full', w2: 'w-2/3' },
+                        ].map((s) => (
+                          <div key={s.label} className="flex items-start gap-2">
+                            <div className={`w-1 rounded-full ${s.color} self-stretch shrink-0`} />
+                            <div className="space-y-1 flex-1">
+                              <div className={`text-[9px] font-semibold ${s.textColor} uppercase tracking-widest`}>{s.label}</div>
+                              <div className={`h-1.5 ${s.w1} rounded-full bg-muted`} />
+                              <div className={`h-1.5 ${s.w2} rounded-full bg-muted`} />
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-1.5 pt-1">
+                        <div className="text-[8px] px-2 py-0.5 rounded bg-brand/10 text-brand font-semibold">Explain</div>
+                        <div className="text-[8px] px-2 py-0.5 rounded bg-accent text-muted-foreground font-medium">Simplify</div>
+                        <div className="text-[8px] px-2 py-0.5 rounded bg-accent text-muted-foreground font-medium">Ask AI</div>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1.5 pt-1">
-                      <div className="text-[8px] px-2 py-0.5 rounded bg-brand/10 text-brand font-semibold">Explain</div>
-                      <div className="text-[8px] px-2 py-0.5 rounded bg-accent text-muted-foreground font-medium">Simplify</div>
-                      <div className="text-[8px] px-2 py-0.5 rounded bg-accent text-muted-foreground font-medium">Ask AI</div>
+                    {/* AI Assistant Preview */}
+                    <div className="p-3 space-y-2 bg-accent/10">
+                      <div className="flex items-center gap-1.5 mb-1.5">
+                        <BotMessageSquare className="h-3 w-3 text-brand" />
+                        <span className="text-[9px] font-semibold text-foreground tracking-wide">AI Assistant</span>
+                      </div>
+                      <div className="rounded-lg bg-accent/60 px-2.5 py-1.5">
+                        <p className="text-[8px] text-muted-foreground">What are the key findings?</p>
+                      </div>
+                      <div className="rounded-lg bg-brand/10 px-2.5 py-1.5 border border-brand/10">
+                        <p className="text-[8px] text-foreground/80">The study identifies 3 main factors that contribute to improved learning outcomes…</p>
+                      </div>
+                      <div className="flex items-center gap-1.5 rounded-lg bg-accent/40 px-2.5 py-1.5">
+                        <span className="text-[8px] text-muted-foreground/60 flex-1">Ask a follow-up…</span>
+                        <ArrowRight className="h-2.5 w-2.5 text-muted-foreground/40" />
+                      </div>
                     </div>
                   </div>
                 </div>
