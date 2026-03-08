@@ -179,7 +179,7 @@ const Workspace = () => {
     if (!user || !activeNoteId) return;
 
     if (action === 'Ask question') {
-      setPendingQuestion({ question: selectedText, selectedText });
+      setPendingQuestion({ question: 'Can you explain this highlighted text?', selectedText });
       return;
     }
 
