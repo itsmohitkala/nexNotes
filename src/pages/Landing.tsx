@@ -43,6 +43,13 @@ const SectionHeading = ({ children, subtitle }: { children: React.ReactNode; sub
 const Landing = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const [stats, setStats] = useState({ notes_count: 0, users_count: 0, ai_queries_count: 0 });
+
+  useEffect(() => {
+    supabase.rpc('get_public_stats').then(({ data }) => {
+      if (data) setStats(data as typeof stats);
+    });
+  }, []);
 
   const handleCTA = () => navigate(user ? '/workspace' : '/signup');
 
