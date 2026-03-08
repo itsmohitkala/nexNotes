@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { prettifyTitle } from '@/lib/format-title';
 import { WorkspaceSidebar } from '@/components/workspace/WorkspaceSidebar';
 import { NotesPanel, NoteDisplay } from '@/components/workspace/NotesPanel';
 import { AiAssistant } from '@/components/workspace/AiAssistant';
@@ -268,17 +269,19 @@ const Workspace = () => {
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top navigation bar */}
         <header className="flex items-center justify-between px-4 h-12 border-b border-border shrink-0">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-accent"
+              className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-accent shrink-0"
             >
               {sidebarOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeft className="h-4 w-4" />}
             </button>
-            {note && note.status === 'ready' && (
-              <span className="text-sm text-foreground font-medium truncate max-w-[300px]">
-                {note.title}
-              </span>
+            {note && note.status === 'ready' ? (
+              <h1 className="text-[15px] font-semibold text-foreground truncate">
+                {prettifyTitle(note.title)}
+              </h1>
+            ) : (
+              <span className="text-[15px] font-semibold text-foreground">Notes</span>
             )}
           </div>
           <div className="flex items-center gap-1">
