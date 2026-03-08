@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { WorkspaceSidebar } from '@/components/workspace/WorkspaceSidebar';
-import { NotesPanel } from '@/components/workspace/NotesPanel';
+import { NotesPanel, NoteDisplay } from '@/components/workspace/NotesPanel';
 import { AiAssistant } from '@/components/workspace/AiAssistant';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Layers, PanelLeftClose, PanelLeft, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface NoteData {
   id: string;
@@ -16,33 +17,114 @@ export interface NoteData {
 
 const Workspace = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
-  const [notes, setNotes] = useState<NoteData[]>([
-    {
-      id: '1',
-      title: 'React Reconciliation',
-      content: `React Reconciliation is the process by which React updates the real DOM to match the virtual DOM.
+  const [searchParams] = useSearchParams();
+  const noteIdFromUrl = searchParams.get('noteId');
 
-Key Steps:
-- Compare virtual DOM with previous version
-- Identify changes
-- Update only necessary elements
+  const [note, setNote] = useState<NoteDisplay | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [sidebarNotes, setSidebarNotes] = useState<NoteData[]>([]);
+  const [activeNoteId, setActiveNoteId] = useState<string | null>(noteIdFromUrl);
 
-Benefits:
-- Improves performance
-- Reduces unnecessary re-rendering`,
-      created_at: new Date().toISOString(),
-    },
-  ]);
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const navigate = useNavigate();
+
+  // Fetch a single note by ID
+  const fetchNote = useCallback(async (id: string) => {
+    const { data, error } = await supabase
+      .from('notes')
+      .select('id, title, content, status, error_message')
+      .eq('id', id)
+      .single();
+
+    if (error || !data) return null;
+
+    return {
+      id: data.id,
+      title: data.title,
+      content: data.content || '',
+      status: (data.status || 'processing') as NoteDisplay['status'],
+      error_message: data.error_message,
+    } satisfies NoteDisplay;
+  }, []);
+
+  // Fetch sidebar notes list
+  useEffect(() => {
+    if (!user) return;
+    const load = async () => {
+      const { data } = await supabase
+        .from('notes')
+        .select('id, title, content, created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+      if (data) setSidebarNotes(data.map(n => ({ ...n, content: n.content || '', created_at: n.created_at || '' })));
+    };
+    load();
+  }, [user]);
+
+  // Set active note from URL
+  useEffect(() => {
+    if (noteIdFromUrl) setActiveNoteId(noteIdFromUrl);
+  }, [noteIdFromUrl]);
+
+  // Fetch + poll the active note
+  useEffect(() => {
+    if (!activeNoteId) {
+      setNote(null);
+      return;
+    }
+
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+
+    const poll = async () => {
+      setLoading(true);
+      const fetched = await fetchNote(activeNoteId);
+      if (cancelled) return;
+      setLoading(false);
+
+      if (fetched) {
+        setNote(fetched);
+        // Keep polling if still processing
+        if (fetched.status === 'processing') {
+          timer = setTimeout(poll, 3000);
+        }
+      } else {
+        setNote(null);
+      }
+    };
+
+    poll();
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [activeNoteId, fetchNote]);
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/', { replace: true });
   };
 
-  const activeNote = notes.find((n) => n.id === activeNoteId) || notes[0] || null;
+  const handleRetry = () => {
+    if (activeNoteId) {
+      // Reset and re-poll
+      setNote((prev) => prev ? { ...prev, status: 'processing' } : prev);
+    }
+  };
+
+  const handleBack = () => {
+    navigate('/');
+  };
+
+  const handleSelectNote = (id: string) => {
+    setActiveNoteId(id);
+    navigate(`/workspace?noteId=${id}`, { replace: true });
+  };
+
+  // Convert for sidebar (legacy shape)
+  const activeNoteForAssistant = note && note.status === 'ready'
+    ? { id: note.id, title: note.title, content: note.content, created_at: '' }
+    : null;
 
   return (
     <div className="h-screen flex flex-col bg-background">
@@ -72,23 +154,26 @@ Benefits:
 
       {/* Main area */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
         {sidebarOpen && (
           <WorkspaceSidebar
-            notes={notes}
-            activeNoteId={activeNote?.id || null}
-            onSelectNote={setActiveNoteId}
+            notes={sidebarNotes}
+            activeNoteId={activeNoteId}
+            onSelectNote={handleSelectNote}
             onCreateNote={() => navigate('/')}
           />
         )}
 
-
-        {/* Content + AI */}
         <div className="flex-1 flex flex-col overflow-hidden">
           <div className="flex-1 overflow-auto">
-            <NotesPanel note={activeNote} />
+            {loading && !note ? (
+              <div className="flex-1 flex items-center justify-center min-h-[400px]">
+                <p className="text-sm text-muted-foreground">Loading…</p>
+              </div>
+            ) : (
+              <NotesPanel note={note} onRetry={handleRetry} onBack={handleBack} />
+            )}
           </div>
-          <AiAssistant note={activeNote} />
+          <AiAssistant note={activeNoteForAssistant} />
         </div>
       </div>
     </div>
