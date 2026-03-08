@@ -21,11 +21,12 @@ interface Props {
   loadingInsight: boolean;
   onHighlightAction: (action: string, selectedText: string) => void;
   onRemoveInsight: (id: string) => void;
+  onCreateNote?: () => void;
 }
 
-export const NotesPanel = ({ note, onRetry, onBack, insights, loadingInsight, onHighlightAction, onRemoveInsight }: Props) => {
+export const NotesPanel = ({ note, onRetry, onBack, insights, loadingInsight, onHighlightAction, onRemoveInsight, onCreateNote }: Props) => {
   if (!note) {
-    return <EmptyState />;
+    return <EmptyState onCreateNote={onCreateNote} />;
   }
 
   if (note.status === 'processing') {

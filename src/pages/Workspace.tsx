@@ -293,6 +293,23 @@ const Workspace = () => {
           )}
         </div>
       </div>
+      <CreateNoteDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        onNoteCreated={(newNote) => {
+          // Refresh sidebar notes
+          if (user) {
+            supabase
+              .from('notes')
+              .select('id, title, content, created_at')
+              .eq('user_id', user.id)
+              .order('created_at', { ascending: false })
+              .then(({ data }) => {
+                if (data) setSidebarNotes(data.map(n => ({ ...n, content: n.content || '', created_at: n.created_at || '' })));
+              });
+          }
+        }}
+      />
     </div>
   );
 };
