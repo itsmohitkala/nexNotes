@@ -1,6 +1,6 @@
 import { NoteData } from '@/pages/Workspace';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Send, Bot, Loader2, AlertCircle, Copy } from 'lucide-react';
+import { Send, Bot, Loader2, AlertCircle, Copy, Trash2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { askAiQuestion } from '@/lib/n8n-api';
 import { supabase } from '@/integrations/supabase/client';
