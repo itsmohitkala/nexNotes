@@ -123,7 +123,7 @@ export const NotesReadyState = ({
           structured.sections.map((section, i) => (
             <section key={i}>
               <div className="flex items-center gap-2.5 mb-4">
-                <div className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                <div className="h-1.5 w-1.5 rounded-full bg-marker-green" />
                 <h2 className="text-[18px] font-semibold text-foreground">{section.heading}</h2>
               </div>
               <ul className="space-y-3 pl-4">
