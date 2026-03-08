@@ -14,8 +14,14 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Space Grotesk", "system-ui", "sans-serif"],
+        sans: ["Inter", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
+      },
+      fontSize: {
+        'page-title': ['1.875rem', { lineHeight: '2.25rem', fontWeight: '700' }],
+        'section-title': ['1.125rem', { lineHeight: '1.5rem', fontWeight: '600' }],
+        'body': ['0.9375rem', { lineHeight: '1.625rem' }],
+        'caption': ['0.8125rem', { lineHeight: '1.125rem' }],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -82,11 +88,16 @@ export default {
           "0%, 100%": { opacity: "0.4" },
           "50%": { opacity: "1" },
         },
+        "fade-in": {
+          from: { opacity: "0", transform: "translateY(8px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "fade-in": "fade-in 0.3s ease-out",
       },
     },
   },

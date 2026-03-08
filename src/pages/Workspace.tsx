@@ -4,7 +4,7 @@ import { NotesPanel, NoteDisplay } from '@/components/workspace/NotesPanel';
 import { AiAssistant } from '@/components/workspace/AiAssistant';
 import { NoteInsight } from '@/components/workspace/NotesReadyState';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Layers, PanelLeftClose, PanelLeft, Settings } from 'lucide-react';
+import { PanelLeftClose, PanelLeft, Settings, LogOut, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -19,6 +19,7 @@ export interface NoteData {
 
 const Workspace = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [aiPanelOpen, setAiPanelOpen] = useState(true);
   const [searchParams] = useSearchParams();
   const noteIdFromUrl = searchParams.get('noteId');
 
@@ -27,7 +28,6 @@ const Workspace = () => {
   const [sidebarNotes, setSidebarNotes] = useState<NoteData[]>([]);
   const [activeNoteId, setActiveNoteId] = useState<string | null>(noteIdFromUrl);
 
-  // AI interaction state
   const [insights, setInsights] = useState<NoteInsight[]>([]);
   const [loadingInsight, setLoadingInsight] = useState(false);
   const [pendingQuestion, setPendingQuestion] = useState<{ question: string; selectedText: string } | null>(null);
@@ -35,13 +35,11 @@ const Workspace = () => {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
 
-  // Reset insights when note changes
   useEffect(() => {
     setInsights([]);
     setPendingQuestion(null);
   }, [activeNoteId]);
 
-  // Fetch a single note by ID, including note_outputs
   const fetchNote = useCallback(async (id: string) => {
     const { data, error } = await supabase
       .from('notes')
@@ -75,7 +73,6 @@ const Workspace = () => {
     return noteDisplay;
   }, []);
 
-  // Fetch sidebar notes list
   useEffect(() => {
     if (!user) return;
     const load = async () => {
@@ -89,12 +86,10 @@ const Workspace = () => {
     load();
   }, [user]);
 
-  // Set active note from URL
   useEffect(() => {
     if (noteIdFromUrl) setActiveNoteId(noteIdFromUrl);
   }, [noteIdFromUrl]);
 
-  // Fetch active note + realtime subscription
   useEffect(() => {
     if (!activeNoteId) {
       setNote(null);
@@ -174,15 +169,13 @@ const Workspace = () => {
     navigate(`/workspace?noteId=${id}`, { replace: true });
   };
 
-  // Handle highlight actions (Explain/Simplify/Summarise go to notes panel, Ask Question goes to AI tab)
   const handleHighlightAction = async (action: string, selectedText: string) => {
     if (!user || !activeNoteId) return;
 
     if (action === 'Ask question') {
-      // Always use a default prompt for highlight-to-AI-tab, selectedText carries the actual highlight
       const defaultAskPrompt = 'Can you explain this highlighted text?';
-      console.log('[Workspace] Ask Question triggered. question:', defaultAskPrompt, '| selectedText:', selectedText);
       setPendingQuestion({ question: defaultAskPrompt, selectedText });
+      if (!aiPanelOpen) setAiPanelOpen(true);
       return;
     }
 
@@ -229,31 +222,35 @@ const Workspace = () => {
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Top bar */}
-      <header className="flex items-center justify-between px-4 py-2 border-b border-border shrink-0">
-        <div className="flex items-center gap-3">
-          <Link to="/" className="flex items-center gap-2">
-            <Layers className="h-5 w-5 text-accent" />
-            <span className="font-semibold text-foreground text-sm">NexNotes</span>
-          </Link>
+      <header className="flex items-center justify-between px-4 h-12 border-b border-border shrink-0 bg-card/50">
+        <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8"
+            className="h-8 w-8 text-muted-foreground hover:text-foreground"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             {sidebarOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeft className="h-4 w-4" />}
           </Button>
+          {note && (
+            <div className="flex items-center gap-2 ml-2">
+              <FileText className="h-3.5 w-3.5 text-muted-foreground" />
+              <span className="text-sm text-foreground font-medium truncate max-w-[300px]">{note.title}</span>
+            </div>
+          )}
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" onClick={handleSignOut}>Log out</Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="sm" onClick={handleSignOut} className="gap-1.5 text-muted-foreground hover:text-foreground h-8">
+            <LogOut className="h-3.5 w-3.5" /> Log out
+          </Button>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
             <Settings className="h-4 w-4" />
           </Button>
         </div>
       </header>
 
-      {/* Main area */}
-      <div className="flex flex-1 overflow-hidden">
+      {/* Main area - 3 column layout */}
+      <div className="flex flex-1 overflow-hidden relative">
         {sidebarOpen && (
           <WorkspaceSidebar
             notes={sidebarNotes}
@@ -263,30 +260,34 @@ const Workspace = () => {
           />
         )}
 
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex-1 overflow-auto">
-            {loading && !note ? (
-              <div className="flex-1 flex items-center justify-center min-h-[400px]">
-                <p className="text-sm text-muted-foreground">Loading…</p>
+        <div className="flex-1 overflow-auto bg-background">
+          {loading && !note ? (
+            <div className="flex-1 flex items-center justify-center min-h-[400px]">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="h-4 w-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                Loading…
               </div>
-            ) : (
-              <NotesPanel
-                note={note}
-                onRetry={handleRetry}
-                onBack={handleBack}
-                insights={insights}
-                loadingInsight={loadingInsight}
-                onHighlightAction={handleHighlightAction}
-                onRemoveInsight={handleRemoveInsight}
-              />
-            )}
-          </div>
-          <AiAssistant
-            note={activeNoteForAssistant}
-            pendingQuestion={pendingQuestion}
-            onPendingHandled={() => setPendingQuestion(null)}
-          />
+            </div>
+          ) : (
+            <NotesPanel
+              note={note}
+              onRetry={handleRetry}
+              onBack={handleBack}
+              insights={insights}
+              loadingInsight={loadingInsight}
+              onHighlightAction={handleHighlightAction}
+              onRemoveInsight={handleRemoveInsight}
+            />
+          )}
         </div>
+
+        <AiAssistant
+          note={activeNoteForAssistant}
+          pendingQuestion={pendingQuestion}
+          onPendingHandled={() => setPendingQuestion(null)}
+          isOpen={aiPanelOpen}
+          onToggle={() => setAiPanelOpen(!aiPanelOpen)}
+        />
       </div>
     </div>
   );
