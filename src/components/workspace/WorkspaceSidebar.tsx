@@ -1,20 +1,33 @@
 import { NoteData } from '@/pages/Workspace';
 import { prettifyTitle } from '@/lib/format-title';
 import { Button } from '@/components/ui/button';
-import { Plus, Search, FileText, Settings, RefreshCw } from 'lucide-react';
+import { Plus, Search, FileText, Settings, RefreshCw, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Link } from 'react-router-dom';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface Props {
   notes: NoteData[];
   activeNoteId: string | null;
   onSelectNote: (id: string) => void;
   onCreateNote: () => void;
+  onDeleteNote: (id: string) => void;
 }
 
-export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNote }: Props) => {
+export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNote, onDeleteNote }: Props) => {
   const [search, setSearch] = useState('');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState<{ id: string; title: string } | null>(null);
 
   const filtered = notes.filter((n) =>
     n.title.toLowerCase().includes(search.toLowerCase())
@@ -76,23 +89,38 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
               : '';
 
             return (
-              <button
+              <div
                 key={note.id}
-                onClick={() => onSelectNote(note.id)}
-                className={`w-full text-left px-3 py-2.5 rounded-lg text-[13px] transition-all mb-0.5 flex items-start gap-2.5 ${
+                className={`group relative w-full text-left px-3 py-2.5 rounded-lg text-[13px] transition-all mb-0.5 flex items-start gap-2.5 ${
                   isActive
                     ? 'bg-accent text-foreground'
                     : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
                 }`}
               >
-                <FileText className="h-3.5 w-3.5 shrink-0 mt-0.5 text-muted-foreground/70" />
-                <div className="min-w-0 flex-1">
-                  <span className="block truncate font-medium">{prettifyTitle(note.title)}</span>
-                  {timeAgo && (
-                    <span className="block text-[11px] text-muted-foreground/60 mt-0.5">{timeAgo}</span>
-                  )}
-                </div>
-              </button>
+                <button
+                  onClick={() => onSelectNote(note.id)}
+                  className="flex items-start gap-2.5 flex-1 min-w-0"
+                >
+                  <FileText className="h-3.5 w-3.5 shrink-0 mt-0.5 text-muted-foreground/70" />
+                  <div className="min-w-0 flex-1">
+                    <span className="block truncate font-medium">{prettifyTitle(note.title)}</span>
+                    {timeAgo && (
+                      <span className="block text-[11px] text-muted-foreground/60 mt-0.5">{timeAgo}</span>
+                    )}
+                  </div>
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setNoteToDelete({ id: note.id, title: note.title });
+                    setDeleteDialogOpen(true);
+                  }}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 flex items-center justify-center rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive shrink-0"
+                  title="Delete note"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
             );
           })}
 
@@ -111,6 +139,32 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
           <RefreshCw className="h-4 w-4" />
         </button>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Note</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{noteToDelete ? prettifyTitle(noteToDelete.title) : ''}"? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (noteToDelete) {
+                  onDeleteNote(noteToDelete.id);
+                  setNoteToDelete(null);
+                }
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </aside>
   );
 };
