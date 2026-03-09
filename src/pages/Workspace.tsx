@@ -273,6 +273,32 @@ const Workspace = () => {
     setInsights((prev) => prev.filter((i) => i.id !== id));
   };
 
+  const handleDeleteNote = async (id: string) => {
+    try {
+      const { error } = await supabase.from('notes').delete().eq('id', id);
+      if (error) throw error;
+
+      // Remove from sidebar
+      setSidebarNotes((prev) => prev.filter((n) => n.id !== id));
+
+      // Clear insights for deleted note
+      setInsightsByNote((prev) => {
+        const updated = { ...prev };
+        delete updated[id];
+        return updated;
+      });
+
+      // If this was the active note, clear it
+      if (activeNoteId === id) {
+        setActiveNoteId(null);
+        setNote(null);
+        navigate('/workspace', { replace: true });
+      }
+    } catch (err) {
+      console.error('Failed to delete note:', err);
+    }
+  };
+
   const activeNoteForAssistant = note && note.status === 'ready'
     ? { id: note.id, title: note.title, content: note.content, created_at: '' }
     : null;
@@ -286,6 +312,7 @@ const Workspace = () => {
           activeNoteId={activeNoteId}
           onSelectNote={handleSelectNote}
           onCreateNote={() => { setActiveNoteId(null); setNote(null); }}
+          onDeleteNote={handleDeleteNote}
         />
       )}
 
