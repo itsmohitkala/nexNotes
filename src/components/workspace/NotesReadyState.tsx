@@ -234,15 +234,22 @@ export const NotesReadyState = ({
   }
 
   // Fallback
-  if (!hasStructured && content) {
+  if (!hasStructured) {
     const idx = sectionCounter++;
     contentSections.push({
       key: `fallback-${idx}`,
       element: (
         <section ref={el => { sectionRefs.current[idx] = el; }}>
-          <div className="text-[15px] text-secondary-foreground whitespace-pre-wrap leading-[1.8]">
-            {content}
-          </div>
+          {content ? (
+            <div className="text-[15px] text-secondary-foreground whitespace-pre-wrap leading-[1.8]">
+              {content}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+              <p className="text-sm">This note has no content yet.</p>
+              <p className="text-xs mt-1">The processing may not have generated output. Try creating the note again.</p>
+            </div>
+          )}
         </section>
       ),
     });
