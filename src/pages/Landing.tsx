@@ -35,7 +35,7 @@ const fadeUp = {
 };
 
 const SectionHeading = ({ children, subtitle }: { children: React.ReactNode; subtitle?: string }) => (
-  <div className="text-center mb-20 space-y-4">
+  <div className="text-center mb-16 space-y-4">
     <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">{children}</h2>
     {subtitle && <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto leading-relaxed">{subtitle}</p>}
   </div>
