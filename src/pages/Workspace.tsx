@@ -319,7 +319,7 @@ const Workspace = () => {
       {/* Center + Right */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top navigation bar */}
-        <header className="flex items-center justify-between px-4 h-12 border-b border-border shrink-0">
+        <header className="flex items-center justify-between px-4 h-12 border-b border-border bg-card shrink-0">
           <div className="flex items-center gap-3 min-w-0">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
