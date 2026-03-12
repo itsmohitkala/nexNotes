@@ -260,36 +260,77 @@ export const NotesReadyState = ({
   // Reset refs array length
   sectionRefs.current.length = sectionCounter;
 
+  // Per-action color scheme for insight cards
+  const getInsightStyle = (action: string) => {
+    switch (action.toLowerCase()) {
+      case 'explain':
+        return {
+          card: 'bg-marker-orange/10 border-marker-orange/25',
+          label: 'text-marker-orange',
+          bar: 'bg-marker-orange',
+          quote: 'border-marker-orange/30',
+          icon: 'text-marker-orange',
+        };
+      case 'simplify':
+        return {
+          card: 'bg-marker-green/10 border-marker-green/25',
+          label: 'text-marker-green',
+          bar: 'bg-marker-green',
+          quote: 'border-marker-green/30',
+          icon: 'text-marker-green',
+        };
+      case 'summarise':
+        return {
+          card: 'bg-marker-purple/10 border-marker-purple/25',
+          label: 'text-marker-purple',
+          bar: 'bg-marker-purple',
+          quote: 'border-marker-purple/30',
+          icon: 'text-marker-purple',
+        };
+      default: // Ask question / Ask AI
+        return {
+          card: 'bg-marker-blue/10 border-marker-blue/25',
+          label: 'text-marker-blue',
+          bar: 'bg-marker-blue',
+          quote: 'border-marker-blue/30',
+          icon: 'text-marker-blue',
+        };
+    }
+  };
+
   // Helper to render insights for a given section index
   const renderInsightsForSection = (sectionIdx: number) => {
     const sectionInsights = insights.filter(ins => insightSectionMap[ins.id] === sectionIdx);
     if (sectionInsights.length === 0) return null;
 
-    return sectionInsights.map((insight, i) => {
+    return sectionInsights.map((insight) => {
       const isLatest = insight.id === insights[insights.length - 1]?.id;
+      const style = getInsightStyle(insight.action);
       return (
         <div
           key={insight.id}
           ref={isLatest ? latestInsightRef : undefined}
           className="group animate-fade-in mt-4"
         >
-          <div className="rounded-xl border border-border bg-card p-5 shadow-lg relative">
+          <div className={`rounded-xl border ${style.card} px-6 py-5 relative`}>
             <button
               onClick={() => onRemoveInsight(insight.id)}
-              className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md hover:bg-accent"
+              className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md hover:bg-black/10"
             >
               <X className="h-3.5 w-3.5 text-muted-foreground" />
             </button>
             <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-[12px] font-semibold uppercase tracking-widest text-muted-foreground">{insight.action}</span>
+              <div className={`h-[16px] w-0.5 rounded-full shrink-0 ${style.bar}`} />
+              <span className={`text-[11px] font-semibold uppercase tracking-[0.1em] ${style.label}`}>
+                {insight.action}
+              </span>
             </div>
             {insight.selectedText && (
-              <p className="text-[13px] text-muted-foreground italic border-l-2 border-muted-foreground/30 pl-3 mb-3">
+              <p className={`text-[13px] text-muted-foreground/70 italic border-l-2 ${style.quote} pl-3 mb-4 py-0.5`}>
                 "{insight.selectedText.length > 120 ? insight.selectedText.slice(0, 120) + '…' : insight.selectedText}"
               </p>
             )}
-            <p className="text-[15px] text-secondary-foreground leading-[1.8]">{insight.answer}</p>
+            <p className="text-[15px] text-foreground/80 leading-[1.85]">{insight.answer}</p>
           </div>
         </div>
       );
@@ -318,9 +359,15 @@ export const NotesReadyState = ({
 
       {/* Summary */}
       {(summary || structured?.oneLineSummary) && (
-        <p className="text-[15px] text-secondary-foreground leading-[1.8] mb-10">
-          {summary || structured?.oneLineSummary}
-        </p>
+        <div className="rounded-xl border border-marker-blue/25 bg-marker-blue/[0.07] px-6 py-5 mb-10">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-[16px] w-0.5 rounded-full bg-marker-blue shrink-0" />
+            <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-marker-blue">Summary</span>
+          </div>
+          <p className="text-[15px] text-foreground/80 leading-[1.85]">
+            {summary || structured?.oneLineSummary}
+          </p>
+        </div>
       )}
 
       {!summary && !structured?.oneLineSummary && <div className="mb-8" />}
