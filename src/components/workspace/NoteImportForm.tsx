@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { N8N_PROCESS_WEBHOOK } from "@/lib/n8n-api";
 
 interface NoteImportFormProps {
   onNoteCreated?: (noteId: string) => void;
@@ -39,8 +40,7 @@ export const NoteImportForm = ({ onNoteCreated }: NoteImportFormProps) => {
 
     setProcessing(true);
     try {
-      const webhookUrl =
-        "https://n8n.srv1006534.hstgr.cloud/webhook/f29d58c6-3923-4ddb-9426-85667b7d8266";
+      const webhookUrl = N8N_PROCESS_WEBHOOK;
 
       const title = file.name.replace(/\.pdf$/i, "");
       const noteId = crypto.randomUUID();

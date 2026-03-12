@@ -39,8 +39,12 @@ export const AiAssistant = ({ note, pendingQuestion, onPendingHandled, onClose }
   const [input, setInput] = useState('');
   // Per-note message store - load from localStorage
   const [messagesByNote, setMessagesByNote] = useState<Record<string, Message[]>>(() => {
-    const saved = localStorage.getItem('aiChatMessages');
-    return saved ? JSON.parse(saved) : {};
+    try {
+      const saved = localStorage.getItem('aiChatMessages');
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
   });
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);

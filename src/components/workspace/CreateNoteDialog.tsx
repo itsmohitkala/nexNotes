@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Globe, AlignLeft, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import { N8N_PROCESS_WEBHOOK } from '@/lib/n8n-api';
 
 interface Props {
   open: boolean;
@@ -41,7 +42,7 @@ export const CreateNoteDialog = ({ open, onOpenChange, onNoteCreated }: Props) =
 
     setProcessing(true);
     try {
-      const webhookUrl = 'https://n8n.srv1006534.hstgr.cloud/webhook/f29d58c6-3923-4ddb-9426-85667b7d8266';
+      const webhookUrl = N8N_PROCESS_WEBHOOK;
 
       const formData = new FormData();
       if (url) formData.append('url', url);

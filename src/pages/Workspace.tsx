@@ -13,6 +13,7 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { performHighlightAction } from '@/lib/n8n-api';
+import { toast } from 'sonner';
 
 export interface NoteData {
   id: string;
@@ -32,8 +33,12 @@ const Workspace = () => {
   const [activeNoteId, setActiveNoteId] = useState<string | null>(noteIdFromUrl);
 
   const [insightsByNote, setInsightsByNote] = useState<Record<string, NoteInsight[]>>(() => {
-    const saved = localStorage.getItem('noteInsights');
-    return saved ? JSON.parse(saved) : {};
+    try {
+      const saved = localStorage.getItem('noteInsights');
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
   });
   const [loadingInsightByNote, setLoadingInsightByNote] = useState<Record<string, boolean>>({});
 
@@ -294,8 +299,8 @@ const Workspace = () => {
         setNote(null);
         navigate('/workspace', { replace: true });
       }
-    } catch (err) {
-      console.error('Failed to delete note:', err);
+    } catch {
+      toast.error('Failed to delete note. Please try again.');
     }
   };
 
