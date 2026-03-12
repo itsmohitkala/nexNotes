@@ -1,0 +1,7 @@
+project_id = "pfyeijrjlycibbabuaoy"
+
+[functions.insert-chunks]
+verify_jwt = false
+
+[functions.insert-note-output]
+verify_jwt = false

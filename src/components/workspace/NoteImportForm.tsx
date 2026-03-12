@@ -1,11 +1,10 @@
-import { useState, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { Upload, ArrowRight, FileText } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { N8N_PROCESS_WEBHOOK } from "@/lib/n8n-api";
+import { useState, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Link2, Type, Upload, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface NoteImportFormProps {
   onNoteCreated?: (noteId: string) => void;
@@ -14,6 +13,8 @@ interface NoteImportFormProps {
 export const NoteImportForm = ({ onNoteCreated }: NoteImportFormProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [url, setUrl] = useState('');
+  const [text, setText] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -23,73 +24,83 @@ export const NoteImportForm = ({ onNoteCreated }: NoteImportFormProps) => {
     e.preventDefault();
     setDragging(false);
     const f = e.dataTransfer.files[0];
-    if (f && f.type === "application/pdf") setFile(f);
-    else if (f) toast.error("Please upload a PDF file.");
+    if (f) setFile(f);
   }, []);
 
   const handleProcess = async () => {
-    if (!file) {
-      toast.error("Please upload a PDF to continue.");
+    if (!url && !text && !file) {
+      toast.error('Please provide a URL, text, or file to process.');
       return;
     }
 
     if (!user) {
-      toast.error("Please sign in first.");
+      toast.error('Please sign in first.');
       return;
     }
 
     setProcessing(true);
     try {
-      const webhookUrl = N8N_PROCESS_WEBHOOK;
+      const webhookUrl = 'https://n8n.srv1006534.hstgr.cloud/webhook/f29d58c6-3923-4ddb-9426-85667b7d8266';
 
-      const title = file.name.replace(/\.pdf$/i, "");
+      const isPdf = file && file.type === 'application/pdf';
+      const sourceType = isPdf ? 'pdf' : url ? 'url' : 'text';
+      const title = file?.name?.replace(/\.pdf$/i, '') || url || 'Untitled';
+
       const noteId = crypto.randomUUID();
-      const storagePath = `${user.id}/${noteId}/source.pdf`;
+      let storagePath: string | null = null;
 
-      const { error: uploadError } = await supabase.storage
-        .from("uploads")
-        .upload(storagePath, file, {
-          upsert: false,
-          contentType: "application/pdf",
-        });
+      if (isPdf && file) {
+        storagePath = `${user.id}/${noteId}/source.pdf`;
+        const { error: uploadError } = await supabase.storage
+          .from('uploads')
+          .upload(storagePath, file, {
+            upsert: false,
+            contentType: 'application/pdf',
+          });
 
-      if (uploadError) {
-        toast.error(`Upload failed: ${uploadError.message}`);
-        setProcessing(false);
-        return;
+        if (uploadError) {
+          toast.error(`Upload failed: ${uploadError.message}`);
+          setProcessing(false);
+          return;
+        }
       }
 
-      const { data: signedUrlData, error: signedUrlError } =
-        await supabase.storage
-          .from("uploads")
+      let fileUrl: string | null = null;
+      if (isPdf && storagePath) {
+        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+          .from('uploads')
           .createSignedUrl(storagePath, 60 * 60);
-
-      const fileUrl = signedUrlError ? null : signedUrlData.signedUrl;
+        if (!signedUrlError) {
+          fileUrl = signedUrlData.signedUrl;
+        }
+      }
 
       const { data: noteData, error: noteError } = await supabase
-        .from("notes")
+        .from('notes')
         .insert({ id: noteId, user_id: user.id, title })
-        .select("id")
+        .select('id')
         .single();
 
-      if (noteError || !noteData) throw new Error("Failed to create note");
+      if (noteError || !noteData) throw new Error('Failed to create note');
 
       const res = await fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: user.id,
           noteId: noteData.id,
-          sourceType: "pdf",
-          sourceRef: storagePath,
+          sourceType,
+          sourceRef: isPdf ? storagePath : (url || null),
           fileUrl,
-          rawText: null,
+          rawText: text || null,
           title,
         }),
       });
 
-      if (!res.ok) throw new Error("Processing failed");
+      if (!res.ok) throw new Error('Processing failed');
 
+      toast.success('Resource processed successfully!');
+      
       if (onNoteCreated) {
         onNoteCreated(noteData.id);
       } else {
@@ -97,103 +108,89 @@ export const NoteImportForm = ({ onNoteCreated }: NoteImportFormProps) => {
       }
     } catch (err) {
       console.error(err);
-      toast.error("Failed to process PDF. Please try again.");
+      toast.error('Failed to process resource. Please try again.');
     } finally {
       setProcessing(false);
     }
   };
 
   return (
-    <div className="w-full max-w-md space-y-8">
+    <div className="w-full max-w-xl space-y-8">
       <div className="text-center space-y-3">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground leading-tight">
-          Think Less. Learn Faster.
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground leading-tight">
+          Your AI-powered knowledge workspace
         </h1>
-        <p className="text-muted-foreground text-[15px] leading-relaxed">
-          Upload a PDF — NexNotes builds clean, interactive notes you can
-          explore and learn from.
+        <p className="text-muted-foreground text-[15px] max-w-md mx-auto leading-relaxed">
+          Drop a file, paste a link, or type text — NexNotes instantly turns it into organized notes you can read, explore, and learn from.
         </p>
       </div>
 
-      <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+      <div className="rounded-xl border border-border bg-card p-5 space-y-3">
+        {/* URL Input */}
+        <div className="flex items-center gap-3 rounded-lg bg-background border border-border px-4 py-2.5 focus-within:border-muted-foreground/30 transition-colors">
+          <Link2 className="h-4 w-4 text-muted-foreground shrink-0" />
+          <input
+            type="url"
+            placeholder="Paste a URL..."
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground text-[14px] outline-none"
+          />
+        </div>
+
+        {/* Text Input */}
+        <div className="flex items-start gap-3 rounded-lg bg-background border border-border px-4 py-2.5 focus-within:border-muted-foreground/30 transition-colors">
+          <Type className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+          <textarea
+            placeholder="Or type / paste text..."
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            rows={3}
+            className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground text-[14px] outline-none resize-none"
+          />
+        </div>
+
         {/* Drop Zone */}
         <div
-          onDragOver={(e) => {
-            e.preventDefault();
-            setDragging(true);
-          }}
+          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
           onDragLeave={() => setDragging(false)}
           onDrop={handleDrop}
           onClick={() => fileRef.current?.click()}
-          className={`flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed py-10 cursor-pointer transition-all duration-200 ${
-            dragging
-              ? "border-muted-foreground/40 bg-accent/50"
-              : file
-              ? "border-muted-foreground/30 bg-accent/20"
-              : "border-border hover:border-muted-foreground/30 hover:bg-accent/20"
+          className={`flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed py-7 cursor-pointer transition-all duration-200 ${
+            dragging ? 'border-muted-foreground/40 bg-accent/50' : 'border-border hover:border-muted-foreground/30 hover:bg-accent/30'
           }`}
         >
+          <Upload className="h-5 w-5 text-muted-foreground" />
           {file ? (
-            <>
-              <div className="h-10 w-10 rounded-lg bg-accent flex items-center justify-center">
-                <FileText className="h-5 w-5 text-foreground" />
-              </div>
-              <div className="text-center">
-                <p className="text-[13px] text-foreground font-medium">
-                  {file.name}
-                </p>
-                <p className="text-[12px] text-muted-foreground mt-0.5">
-                  {(file.size / 1024 / 1024).toFixed(1)} MB ·{" "}
-                  <span
-                    className="underline cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setFile(null);
-                    }}
-                  >
-                    Remove
-                  </span>
-                </p>
-              </div>
-            </>
+            <p className="text-[13px] text-foreground font-medium">{file.name}</p>
           ) : (
-            <>
-              <div className="h-10 w-10 rounded-lg bg-accent flex items-center justify-center">
-                <Upload className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <div className="text-center space-y-1">
-                <p className="text-[13px] text-foreground font-medium">
-                  Drop a PDF here or{" "}
-                  <span className="text-muted-foreground">browse</span>
-                </p>
-                <p className="text-[12px] text-muted-foreground">
-                  Supports PDF documents
-                </p>
-              </div>
-            </>
+            <p className="text-[13px] text-muted-foreground">
+              Drop a file here or <span className="text-foreground font-medium">browse</span>
+            </p>
           )}
           <input
             ref={fileRef}
             type="file"
             className="hidden"
-            accept=".pdf"
+            accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
             onChange={(e) => e.target.files?.[0] && setFile(e.target.files[0])}
           />
         </div>
 
         <Button
-          className="w-full h-11 bg-accent hover:bg-accent/80 text-foreground border border-border text-[14px] font-medium"
+          className="w-full bg-accent hover:bg-accent/80 text-foreground border border-border"
+          size="lg"
           onClick={handleProcess}
-          disabled={processing || !file}
+          disabled={processing}
         >
           {processing ? (
             <span className="flex items-center gap-2">
               <span className="h-4 w-4 border-2 border-foreground/30 border-t-foreground rounded-full animate-spin" />
-              Uploading...
+              Processing...
             </span>
           ) : (
             <span className="flex items-center gap-2">
-              Generate Notes from PDF
+              Process & Generate Notes
               <ArrowRight className="h-4 w-4" />
             </span>
           )}

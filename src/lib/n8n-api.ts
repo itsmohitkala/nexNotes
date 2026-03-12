@@ -5,9 +5,6 @@ export const N8N_AI_QUESTION_WEBHOOK =
 export const N8N_HIGHLIGHT_WEBHOOK =
   'https://n8n.srv1006534.hstgr.cloud/webhook/5272f3ff-969b-46ab-827e-3929e56649ef';
 
-export const N8N_PROCESS_WEBHOOK =
-  'https://n8n.srv1006534.hstgr.cloud/webhook/f29d58c6-3923-4ddb-9426-85667b7d8266';
-
 export interface AiQuestionPayload {
   userId: string;
   noteId: string;

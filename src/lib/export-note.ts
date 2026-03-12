@@ -1,4 +1,3 @@
-import jsPDF from 'jspdf';
 import type { StructuredNote } from '@/components/workspace/NotesReadyState';
 import { prettifyTitle } from '@/lib/format-title';
 
@@ -85,114 +84,44 @@ export function downloadPdf(
   structured: StructuredNote | null | undefined,
   content: string
 ) {
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
+  const md = structuredNoteToMarkdown(title, summary, structured, content);
   const displayTitle = prettifyTitle(structured?.title || title);
-  const safeTitle = displayTitle
-    .replace(/[^a-zA-Z0-9 ]/g, '')
-    .trim()
-    .replace(/\s+/g, '-')
-    .toLowerCase();
+  const safeTitle = displayTitle.replace(/[^a-zA-Z0-9 ]/g, '').trim().replace(/\s+/g, '-');
 
-  const margin = 20;
-  const pageW = doc.internal.pageSize.getWidth();
-  const pageH = doc.internal.pageSize.getHeight();
-  const contentW = pageW - margin * 2;
-  let y = margin;
+  // Build a simple HTML document and use browser print-to-PDF
+  const html = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>${displayTitle}</title>
+<style>
+  body { font-family: 'Segoe UI', system-ui, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; color: #1a1a1a; line-height: 1.7; }
+  h1 { font-size: 24px; margin-bottom: 8px; }
+  h2 { font-size: 18px; margin-top: 28px; border-bottom: 1px solid #e5e5e5; padding-bottom: 6px; }
+  ul, ol { padding-left: 24px; }
+  li { margin-bottom: 4px; }
+  p { margin: 8px 0; }
+</style></head><body>${markdownToHtml(md)}</body></html>`;
 
-  // Advance y, adding a new page if needed
-  const checkPage = (needed: number) => {
-    if (y + needed > pageH - margin) {
-      doc.addPage();
-      y = margin;
-    }
-  };
-
-  const writeLine = (
-    text: string,
-    size: number,
-    style: 'normal' | 'bold' = 'normal',
-    rgb: [number, number, number] = [20, 20, 20]
-  ) => {
-    doc.setFontSize(size);
-    doc.setFont('helvetica', style);
-    doc.setTextColor(rgb[0], rgb[1], rgb[2]);
-    const lineH = size * 0.45; // mm per line at this font size
-    const lines = doc.splitTextToSize(text, contentW) as string[];
-    checkPage(lines.length * lineH);
-    doc.text(lines, margin, y);
-    y += lines.length * lineH;
-  };
-
-  const gap = (mm: number) => { checkPage(mm); y += mm; };
-
-  // ── Title ──────────────────────────────────────────────────────────────
-  writeLine(displayTitle, 20, 'bold', [10, 10, 10]);
-  gap(5);
-
-  // ── Summary ────────────────────────────────────────────────────────────
-  const summaryText = summary || structured?.oneLineSummary;
-  if (summaryText) {
-    writeLine(summaryText, 11, 'normal', [70, 70, 90]);
-    gap(7);
+  const printWindow = window.open('', '_blank');
+  if (printWindow) {
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.onload = () => {
+      printWindow.print();
+    };
   }
+}
 
-  // ── Key Points ─────────────────────────────────────────────────────────
-  if (structured?.keyPoints?.length) {
-    writeLine('Key Points', 13, 'bold', [60, 60, 140]);
-    gap(2);
-    structured.keyPoints.forEach(point => {
-      writeLine(`• ${point}`, 10, 'normal', [40, 40, 40]);
-      gap(1);
-    });
-    gap(5);
-  }
-
-  // ── Sections ───────────────────────────────────────────────────────────
-  if (structured?.sections?.length) {
-    structured.sections.forEach(section => {
-      writeLine(section.heading, 13, 'bold', [50, 120, 80]);
-      gap(2);
-      section.points.forEach(point => {
-        writeLine(`• ${point}`, 10, 'normal', [40, 40, 40]);
-        gap(1);
-      });
-      gap(5);
-    });
-  }
-
-  // ── Glossary ───────────────────────────────────────────────────────────
-  if (structured?.glossary?.length) {
-    writeLine('Glossary', 13, 'bold', [50, 90, 160]);
-    gap(2);
-    structured.glossary.forEach(item => {
-      writeLine(`${item.term} — ${item.meaning}`, 10, 'normal', [40, 40, 40]);
-      gap(1);
-    });
-    gap(5);
-  }
-
-  // ── Review Questions ───────────────────────────────────────────────────
-  if (structured?.questions?.length) {
-    writeLine('Review Questions', 13, 'bold', [160, 100, 40]);
-    gap(2);
-    structured.questions.forEach((q, i) => {
-      writeLine(`${i + 1}. ${q}`, 10, 'normal', [40, 40, 40]);
-      gap(1.5);
-    });
-  }
-
-  // ── Fallback raw content ───────────────────────────────────────────────
-  if (
-    !structured?.keyPoints?.length &&
-    !structured?.sections?.length &&
-    !structured?.glossary?.length &&
-    !structured?.questions?.length &&
-    content
-  ) {
-    writeLine(content, 10, 'normal', [40, 40, 40]);
-  }
-
-  // Trigger immediate browser download — no dialog
-  doc.save(`${safeTitle}.pdf`);
+/** Minimal markdown-to-HTML for PDF export */
+function markdownToHtml(md: string): string {
+  return md
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>')
+    .replace(/^- \*\*(.+?)\*\*\s*—\s*(.+)$/gm, '<li><strong>$1</strong> — $2</li>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, (match) => {
+      const isOrdered = /^\d+\./.test(md.slice(md.indexOf(match.trim().slice(4, 20)) - 5, md.indexOf(match.trim().slice(4, 20))));
+      return isOrdered ? `<ol>${match}</ol>` : `<ul>${match}</ul>`;
+    })
+    .replace(/\n{2,}/g, '\n')
+    .replace(/^(?!<[hulo])(.*\S.*)$/gm, '<p>$1</p>');
 }

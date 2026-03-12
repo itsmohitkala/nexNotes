@@ -13,7 +13,6 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { performHighlightAction } from '@/lib/n8n-api';
-import { toast } from 'sonner';
 
 export interface NoteData {
   id: string;
@@ -33,12 +32,8 @@ const Workspace = () => {
   const [activeNoteId, setActiveNoteId] = useState<string | null>(noteIdFromUrl);
 
   const [insightsByNote, setInsightsByNote] = useState<Record<string, NoteInsight[]>>(() => {
-    try {
-      const saved = localStorage.getItem('noteInsights');
-      return saved ? JSON.parse(saved) : {};
-    } catch {
-      return {};
-    }
+    const saved = localStorage.getItem('noteInsights');
+    return saved ? JSON.parse(saved) : {};
   });
   const [loadingInsightByNote, setLoadingInsightByNote] = useState<Record<string, boolean>>({});
 
@@ -299,8 +294,8 @@ const Workspace = () => {
         setNote(null);
         navigate('/workspace', { replace: true });
       }
-    } catch {
-      toast.error('Failed to delete note. Please try again.');
+    } catch (err) {
+      console.error('Failed to delete note:', err);
     }
   };
 
@@ -324,7 +319,7 @@ const Workspace = () => {
       {/* Center + Right */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top navigation bar */}
-        <header className="flex items-center justify-between px-4 h-12 border-b border-border bg-card shrink-0">
+        <header className="flex items-center justify-between px-4 h-12 border-b border-border shrink-0">
           <div className="flex items-center gap-3 min-w-0">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -403,7 +398,6 @@ const Workspace = () => {
                 loadingInsight={loadingInsight}
                 onHighlightAction={handleHighlightAction}
                 onRemoveInsight={handleRemoveInsight}
-                aiPanelOpen={aiPanelOpen}
                 onNoteCreated={(noteId) => {
                   handleSelectNote(noteId);
                   // Refresh sidebar

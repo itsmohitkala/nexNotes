@@ -35,16 +35,21 @@ export const WorkspaceSidebar = ({ notes, activeNoteId, onSelectNote, onCreateNo
 
   return (
     <aside className="w-[260px] border-r border-border bg-card flex flex-col shrink-0 h-full">
-      {/* Logo — h-12 matches the top header exactly */}
-      <div className="px-4 h-12 flex items-center shrink-0 border-b border-border">
+      {/* Logo */}
+      <div className="px-5 pt-6 pb-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5">
           <img src="/logo.png" alt="NexNotes" className="h-7 w-7 rounded-md" />
-          <span className="text-[15px] font-semibold text-foreground tracking-tight">NexNotes</span>
+          <span className="text-[16px] font-semibold text-foreground tracking-tight">NexNotes</span>
         </Link>
       </div>
 
+      {/* Divider */}
+      <div className="px-4 pb-3 mt-[10px]">
+        <div className="h-px bg-border/50" />
+      </div>
+
       {/* Create + Search */}
-      <div className="px-4 space-y-3 pt-4 pb-4">
+      <div className="px-4 space-y-3 pb-4">
         <Button
           size="sm"
           className="w-full justify-start gap-2 h-10 text-[13px] bg-accent hover:bg-accent/80 text-foreground border border-border"
