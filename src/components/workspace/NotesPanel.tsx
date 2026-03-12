@@ -22,9 +22,10 @@ interface Props {
   onHighlightAction: (action: string, selectedText: string) => void;
   onRemoveInsight: (id: string) => void;
   onNoteCreated?: (noteId: string) => void;
+  aiPanelOpen?: boolean;
 }
 
-export const NotesPanel = ({ note, onRetry, onBack, insights, loadingInsight, onHighlightAction, onRemoveInsight, onNoteCreated }: Props) => {
+export const NotesPanel = ({ note, onRetry, onBack, insights, loadingInsight, onHighlightAction, onRemoveInsight, onNoteCreated, aiPanelOpen }: Props) => {
   if (!note) {
     return <EmptyState onNoteCreated={onNoteCreated} />;
   }
@@ -53,6 +54,7 @@ export const NotesPanel = ({ note, onRetry, onBack, insights, loadingInsight, on
       loadingInsight={loadingInsight}
       onHighlightAction={onHighlightAction}
       onRemoveInsight={onRemoveInsight}
+      aiPanelOpen={aiPanelOpen}
     />
   );
 };

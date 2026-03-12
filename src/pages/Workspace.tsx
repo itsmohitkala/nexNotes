@@ -398,6 +398,7 @@ const Workspace = () => {
                 loadingInsight={loadingInsight}
                 onHighlightAction={handleHighlightAction}
                 onRemoveInsight={handleRemoveInsight}
+                aiPanelOpen={aiPanelOpen}
                 onNoteCreated={(noteId) => {
                   handleSelectNote(noteId);
                   // Refresh sidebar

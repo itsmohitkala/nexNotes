@@ -28,6 +28,7 @@ interface Props {
   loadingInsight: boolean;
   onHighlightAction: (action: string, selectedText: string, sectionIndex?: number) => void;
   onRemoveInsight: (id: string) => void;
+  aiPanelOpen?: boolean;
 }
 
 const INLINE_ACTIONS = ['Explain', 'Simplify', 'Summarise'];
@@ -36,6 +37,7 @@ const ALL_ACTIONS = [...INLINE_ACTIONS, 'Ask question'];
 export const NotesReadyState = ({
   title, content, summary, structured,
   insights, loadingInsight, onHighlightAction, onRemoveInsight,
+  aiPanelOpen = false,
 }: Props) => {
   const [selectedText, setSelectedText] = useState('');
   const [toolbarPos, setToolbarPos] = useState<{ x: number; y: number } | null>(null);
@@ -308,7 +310,7 @@ export const NotesReadyState = ({
   };
 
   return (
-    <div className="relative w-full max-w-[900px] mx-auto px-8 md:px-12 py-10" ref={containerRef}>
+    <div className={`relative w-full mx-auto px-8 md:px-12 py-10 transition-all duration-300 ${aiPanelOpen ? 'max-w-[860px]' : 'max-w-[1060px]'}`} ref={containerRef}>
       {/* Title */}
       <h1 className="text-[30px] font-bold text-foreground leading-tight tracking-tight mb-4">
         {prettifyTitle(structured?.title || title)}
