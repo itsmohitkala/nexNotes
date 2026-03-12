@@ -7,57 +7,57 @@
 @layer base {
   /* Light mode */
   :root {
-    --background: 220 20% 97%;
-    --foreground: 220 14% 10%;
+    --background: 250 35% 97%;
+    --foreground: 252 22% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 14% 10%;
+    --card-foreground: 252 22% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 14% 10%;
+    --popover-foreground: 252 22% 11%;
 
-    --primary: 220 12% 20%;
+    --primary: 252 45% 22%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 93%;
-    --secondary-foreground: 220 14% 25%;
+    --secondary: 252 30% 92%;
+    --secondary-foreground: 252 22% 26%;
 
-    --muted: 220 14% 93%;
-    --muted-foreground: 220 10% 46%;
+    --muted: 252 25% 92%;
+    --muted-foreground: 252 14% 46%;
 
-    --accent: 220 14% 92%;
-    --accent-foreground: 220 14% 10%;
+    --accent: 252 30% 90%;
+    --accent-foreground: 252 22% 11%;
 
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 88%;
-    --input: 220 13% 88%;
-    --ring: 220 10% 50%;
+    --border: 252 22% 86%;
+    --input: 252 22% 86%;
+    --ring: 252 56% 58%;
 
     --radius: 0.5rem;
 
-    --brand: 252 56% 57%;
+    --brand: 252 65% 58%;
     --brand-foreground: 0 0% 100%;
-    --brand-light: 252 56% 95%;
-    --brand-dark: 252 56% 48%;
+    --brand-light: 252 65% 95%;
+    --brand-dark: 252 65% 48%;
 
-    --sidebar-background: 220 20% 96%;
-    --sidebar-foreground: 220 10% 40%;
-    --sidebar-primary: 220 12% 20%;
+    --sidebar-background: 250 32% 95%;
+    --sidebar-foreground: 252 14% 38%;
+    --sidebar-primary: 252 45% 22%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 14% 92%;
-    --sidebar-accent-foreground: 220 14% 10%;
-    --sidebar-border: 220 13% 90%;
-    --sidebar-ring: 220 10% 50%;
+    --sidebar-accent: 252 30% 90%;
+    --sidebar-accent-foreground: 252 22% 11%;
+    --sidebar-border: 252 22% 88%;
+    --sidebar-ring: 252 56% 58%;
 
-    --surface: 220 14% 95%;
-    --surface-hover: 220 14% 92%;
+    --surface: 252 28% 94%;
+    --surface-hover: 252 28% 91%;
 
-    --marker-purple: 270 50% 55%;
-    --marker-green: 152 45% 42%;
-    --marker-orange: 30 65% 50%;
-    --marker-blue: 210 40% 50%;
+    --marker-purple: 270 62% 52%;
+    --marker-green: 152 55% 38%;
+    --marker-orange: 28 78% 48%;
+    --marker-blue: 212 65% 48%;
   }
 
   /* Dark mode */
