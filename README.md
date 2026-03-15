@@ -1,73 +1,134 @@
-# Welcome to your Lovable project
+# nexNotes
 
-## Project info
+**Transforming Documents into Interactive Notes**
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+nexNotes is a web app that uses AI to convert documents and content into structured, interactive notes — with a built-in AI assistant, PDF export, and a complete notes management system.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## Features
 
-**Use Lovable**
+- **AI-Powered Notes Generation** — Submit a document or topic and get structured notes generated via n8n AI workflows
+- **Interactive Notes** — View and manage AI-generated notes with rich formatting
+- **AI Assistant** — Chat with an in-app AI assistant for help understanding your notes
+- **Download as PDF** — Export any note as a PDF using jsPDF
+- **Complete Notes Maintenance** — Create, view, and manage all your notes in one workspace
+- **Cross-Platform Access** — Web-based, works on any device
+- **Dark / Light Theme** — Toggle between dark and light modes
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## Tech Stack
 
-**Use your preferred IDE**
+| Layer | Technology |
+|---|---|
+| Frontend | React 18 + TypeScript |
+| Build Tool | Vite |
+| Styling | Tailwind CSS + shadcn/ui |
+| Auth & Database | Supabase |
+| AI Workflows | n8n |
+| PDF Export | jsPDF |
+| State / Data | TanStack Query |
+| Routing | React Router v6 |
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Project Structure
 
-Follow these steps:
+```
+src/
+├── pages/
+│   ├── Landing.tsx        # Public landing page
+│   ├── Login.tsx          # Authentication - login
+│   ├── Signup.tsx         # Authentication - signup
+│   ├── Workspace.tsx      # Main app (protected)
+│   ├── Settings.tsx       # User settings (protected)
+│   └── NotFound.tsx       # 404 page
+├── components/
+│   ├── workspace/
+│   │   ├── WorkspaceSidebar.tsx    # Sidebar with note list
+│   │   ├── NotesPanel.tsx          # Main notes display panel
+│   │   ├── AiAssistant.tsx         # AI chat assistant
+│   │   ├── NoteImportForm.tsx      # Form to generate notes from input
+│   │   ├── CreateNoteDialog.tsx    # Dialog for creating new notes
+│   │   └── ...                     # Other workspace state components
+│   └── ui/                         # shadcn/ui component library
+├── contexts/
+│   └── AuthContext.tsx     # Supabase authentication context
+├── integrations/
+│   └── supabase/           # Supabase client & generated types
+├── lib/
+│   ├── n8n-api.ts          # n8n webhook integration
+│   ├── export-note.ts      # PDF export logic
+│   └── utils.ts            # Shared utilities
+└── hooks/                  # Custom React hooks
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+---
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## Getting Started
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Prerequisites
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+- Node.js 18+
+- A [Supabase](https://supabase.com) project
+- An [n8n](https://n8n.io) instance with AI workflow configured
+
+### Installation
+
+```bash
+git clone <repo-url>
+cd nexNotes
+npm install
+```
+
+### Environment Variables
+
+Create a `.env` file in the root:
+
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_N8N_WEBHOOK_URL=your_n8n_webhook_url
+```
+
+### Run Locally
+
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Open [http://localhost:5173](http://localhost:5173)
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Build for Production
 
-**Use GitHub Codespaces**
+```bash
+npm run build
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+---
 
-## What technologies are used for this project?
+## Scripts
 
-This project is built with:
+| Command | Description |
+|---|---|
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
+| `npm run preview` | Preview production build |
+| `npm run lint` | Run ESLint |
+| `npm run test` | Run tests (Vitest) |
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
+## Team
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+**Team Code: IT-15**
 
-## Can I connect a custom domain to my Lovable project?
+---
 
-Yes, you can!
+## Future Scope
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+- Video / lecture to notes conversion
+- Collaborative notes editing
+- Mobile app support
+- Enhanced AI interactions — quizzes, summaries, and flashcards
