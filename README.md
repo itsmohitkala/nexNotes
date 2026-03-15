@@ -20,16 +20,16 @@ nexNotes is a web app that uses AI to convert documents and content into structu
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend | React 18 + TypeScript |
-| Build Tool | Vite |
-| Styling | Tailwind CSS + shadcn/ui |
-| Auth & Database | Supabase |
-| AI Workflows | n8n |
-| PDF Export | jsPDF |
-| State / Data | TanStack Query |
-| Routing | React Router v6 |
+| Layer           | Technology               |
+| --------------- | ------------------------ |
+| Frontend        | React 18 + TypeScript    |
+| Build Tool      | Vite                     |
+| Styling         | Tailwind CSS + shadcn/ui |
+| Auth & Database | Supabase                 |
+| AI Workflows    | n8n                      |
+| PDF Export      | jsPDF                    |
+| State / Data    | TanStack Query           |
+| Routing         | React Router v6          |
 
 ---
 
@@ -110,13 +110,13 @@ npm run build
 
 ## Scripts
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Start development server |
-| `npm run build` | Production build |
+| Command           | Description              |
+| ----------------- | ------------------------ |
+| `npm run dev`     | Start development server |
+| `npm run build`   | Production build         |
 | `npm run preview` | Preview production build |
-| `npm run lint` | Run ESLint |
-| `npm run test` | Run tests (Vitest) |
+| `npm run lint`    | Run ESLint               |
+| `npm run test`    | Run tests (Vitest)       |
 
 ---
 
