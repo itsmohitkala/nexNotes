@@ -111,7 +111,8 @@ export const NoteImportForm = ({ onNoteCreated }: NoteImportFormProps) => {
         </h1>
         <p className="text-muted-foreground text-[15px] leading-relaxed">
           Upload a PDF — NexNotes builds clean, interactive notes you can
-          explore and learn from.
+          explore and learn from. Structured,Concised, Easy to understand,
+          Interactive
         </p>
       </div>
 
@@ -129,8 +130,8 @@ export const NoteImportForm = ({ onNoteCreated }: NoteImportFormProps) => {
             dragging
               ? "border-muted-foreground/40 bg-accent/50"
               : file
-              ? "border-muted-foreground/30 bg-accent/20"
-              : "border-border hover:border-muted-foreground/30 hover:bg-accent/20"
+                ? "border-muted-foreground/30 bg-accent/20"
+                : "border-border hover:border-muted-foreground/30 hover:bg-accent/20"
           }`}
         >
           {file ? (
